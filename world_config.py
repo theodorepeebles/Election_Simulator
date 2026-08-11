@@ -2,6 +2,9 @@ import random
 
 NUM_VOTERS = 9
 
+# infrastructure is wired to 2 candidates for now
+NUM_CANDIDATES = 2
+
 # range for the metrics ground truth
 START_LEVEL_MIN = 50
 START_LEVEL_MAX = 70
