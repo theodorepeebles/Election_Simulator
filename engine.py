@@ -1,4 +1,5 @@
 import random
+import time
 
 from world_config import generate_world_state, NUM_VOTERS, NUM_CANDIDATES
 from candidates import Candidate
@@ -98,6 +99,8 @@ def tally_votes(final_polls, candidate_names):
 
 
 def run_simulation():
+    start_time = time.time()
+
     seed = random.randint(0, 2**32 - 1)
     ground_truth, voter_dicts = generate_world_state(seed)
 
@@ -133,5 +136,6 @@ def run_simulation():
         })
 
     event_log["result"] = tally_votes(list(event_log["rounds"][-1]["polls"].values()), ground_truth["candidate_names"])
+    event_log["duration_seconds"] = time.time() - start_time
 
     return event_log
