@@ -1,6 +1,6 @@
 import random
 
-NUM_VOTERS = 9
+NUM_VOTERS = 3
 
 # infrastructure is wired to 2 candidates for now
 NUM_CANDIDATES = 2
@@ -66,7 +66,7 @@ def generate_world_state(seed=None):
     }
 
     # create the voters' starting stats
-    voters = []
+    voter_dicts = []
     for i in range(1, NUM_VOTERS + 1):
         w_tolan = rng.uniform(0, 1)
         w_vesper = 1 - w_tolan
@@ -87,7 +87,7 @@ def generate_world_state(seed=None):
             },
         }
 
-        voters.append({
+        voter_dicts.append({
             "voter_id": f"voter_{i}",
             "name": f"Voter {i}",
             "weights": {"tolan": w_tolan, "vesper": w_vesper},
@@ -95,4 +95,4 @@ def generate_world_state(seed=None):
             "perceived_attribution": perceived_attribution,
         })
 
-    return ground_truth, voters
+    return ground_truth, voter_dicts
