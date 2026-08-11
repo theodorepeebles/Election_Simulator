@@ -1,30 +1,50 @@
+import json
+
 import requests
 
 
 # Will be replaced with a wrapper for common LLM APIs.
 def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "qwen3:8b", think: bool = False) -> str:
     """
-    POSTs prompt to Ollama's local HTTP server.
+    POSTs prompt to Ollama's local HTTP server, streaming the response and
+    printing each token to the console live as it arrives.
     Returns:
-        the stripped LLM response.
+        the stripped, full LLM response.
     """
     body = {
         "model": model,
         "prompt": prompt,
         "system": system,
-        "stream": False,
+        "stream": True,
         "think": think
     }
     if fmt:
         body["format"] = fmt
 
     try:
-        response = requests.post("http://localhost:11434/api/generate", json=body, timeout=150)
+        response = requests.post("http://localhost:11434/api/generate", json=body, timeout=150, stream=True)
 
         # This forces an exception if Ollama returns a 500 Internal Server Error
         response.raise_for_status()
 
-        return response.json()["response"].strip()
+        # Ollama sends one JSON object per line instead of a single JSON body;
+        # print each fragment live and stitch them back into the full string.
+        full_response = ""
+        for line in response.iter_lines():
+            if not line:
+                continue
+            chunk = json.loads(line)
+            if chunk.get("thinking"):
+                print(chunk["thinking"], end="", flush=True)
+            token = chunk.get("response", "")
+            if token:
+                print(token, end="", flush=True)
+                full_response += token
+            if chunk.get("done"):
+                break
+        print()
+
+        return full_response.strip()
 
     except requests.exceptions.Timeout:
         raise RuntimeError("Ollama API timed out after 150 seconds. The server might be hung.")
