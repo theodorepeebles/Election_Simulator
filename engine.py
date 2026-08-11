@@ -112,7 +112,7 @@ def run_simulation():
     voters = [Voter(v, NUM_ROUNDS, VOTER_EXPLANATION_WORD_BUDGET) for v in voter_dicts]
     last_beliefs_by_voter = {v.voter_id: None for v in voters}
 
-    event_log = {"seed": seed, "rounds": []}
+    event_log = {"seed": seed, "ground_truth": ground_truth, "voter_dicts": voter_dicts, "rounds": []}
 
     for round_number in range(1, NUM_ROUNDS + 1):
         is_final_round = round_number == NUM_ROUNDS

@@ -2,12 +2,17 @@ import os
 import textwrap
 from itertools import zip_longest
 
+from prompts import format_ground_truth_table, _fmt
+
 META_KEYS = {"raw", "voter_id", "name", "candidate_key"}
 COLUMN_WIDTH = 45
 
 
 def _is_malformed(result):
-    return any(v is None for k, v in result.items() if k not in META_KEYS)
+    return any(
+        v is None or (isinstance(v, str) and not v.strip())
+        for k, v in result.items() if k not in META_KEYS
+    )
 
 
 def _side_by_side(label_a, text_a, label_b, text_b, width=COLUMN_WIDTH):
@@ -34,6 +39,28 @@ def render_event_log(event_log):
     malformed = 0
 
     emit(f"=== SIMULATION RUN (seed={seed}) ===")
+
+    ground_truth = event_log.get("ground_truth")
+    if ground_truth:
+        emit()
+        emit("=== GROUND TRUTH ===")
+        emit(format_ground_truth_table(ground_truth))
+
+    voter_dicts = event_log.get("voter_dicts")
+    if voter_dicts:
+        emit()
+        emit("=== VOTERS' INITIAL SETUP ===")
+        for v in voter_dicts:
+            w = v["weights"]
+            lvl = v["perceived_level"]
+            attr = v["perceived_attribution"]
+            c1, c2 = ground_truth["candidate_names"].values()
+            emit(
+                f"{v['name']}: weight_tolan={w['tolan']:.2f} weight_vesper={w['vesper']:.2f} | "
+                f"level_tolan={_fmt(lvl['tolan'])} level_vesper={_fmt(lvl['vesper'])} | "
+                f"{c1}_attr(tolan={_fmt(attr['candidate_1']['tolan'])}, vesper={_fmt(attr['candidate_1']['vesper'])}) "
+                f"{c2}_attr(tolan={_fmt(attr['candidate_2']['tolan'])}, vesper={_fmt(attr['candidate_2']['vesper'])})"
+            )
 
     for entry in rounds:
         emit()
