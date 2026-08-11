@@ -60,16 +60,23 @@ appears after that marker."""
 
 def build_politician_round_prompt(round_number, num_rounds, history_text=""):
     if not history_text:
-        return f"""This is round {round_number} of {num_rounds}. There is no prior history yet.
+        intro = f"This is round {round_number} of {num_rounds}. There is no prior history yet."
+        closing = "Produce your opening statement."
+    else:
+        intro = (
+            f"This is round {round_number} of {num_rounds}. Below is the full history of\n"
+            "the election so far."
+        )
+        closing = f"Produce your statement for round {round_number}."
 
-Produce your opening statement."""
+    sections = [intro]
+    if history_text:
+        sections.append(history_text)
+    if round_number == num_rounds:
+        sections.append("This is your last round. After this, voters will vote.")
+    sections.append(closing)
 
-    return f"""This is round {round_number} of {num_rounds}. Below is the full history of
-the election so far.
-
-{history_text}
-
-Produce your statement for round {round_number}."""
+    return "\n\n".join(sections)
 
 
 def build_voter_system_prompt(voter, num_rounds, explanation_word_budget):
@@ -85,7 +92,7 @@ The election runs for {num_rounds} rounds. Each round, both candidates
 release a public statement. After each round (except the final one) you
 will privately state which candidate you currently prefer, along with a
 short explanation, and privately update your own impression of the state
-of Larran. After round {num_rounds}, you will cast your final vote.
+of Larran. In the last round, you will cast your final vote.
 
 Two things matter to you about Larran: Tolan and Vesper. How much you
 personally care about each is fixed and is as follows:
@@ -191,6 +198,12 @@ level_vesper: {initial_lvl['vesper']}
 {candidate_b}_attribution_tolan: {initial_attr['candidate_2']['tolan']}
 {candidate_b}_attribution_vesper: {initial_attr['candidate_2']['vesper']}"""
         closing = "State which candidate you currently prefer, why, and your updated\nperceptions."
-        sections = [intro, statements_block, initial_block, last_belief_block, closing]
+        next_round_note = None
+        if round_number == num_rounds - 1:
+            next_round_note = (
+                "Next round you will officially cast your final vote, which will\n"
+                "influence the election."
+            )
+        sections = [intro, statements_block, initial_block, last_belief_block, closing, next_round_note]
 
     return "\n\n".join(s for s in sections if s is not None)
