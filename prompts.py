@@ -138,7 +138,9 @@ level_vesper: #
 {candidate_a}_attribution_tolan: #
 {candidate_a}_attribution_vesper: #
 {candidate_b}_attribution_tolan: #
-{candidate_b}_attribution_vesper: #"""
+{candidate_b}_attribution_vesper: #
+For any individual value that hasn't changed, write UNCHANGED instead of a
+number on that line."""
 
 
 def build_voter_prompt(

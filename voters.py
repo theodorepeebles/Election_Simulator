@@ -40,42 +40,55 @@ class Voter:
         return extract_marked_fields(raw, markers)
 
 
-def parse_private_perceptions(text):
+def parse_private_perceptions(text, previous=None):
     """
     Turns a voter's raw PRIVATE PERCEPTIONS text block (one "key: value" line
     per field, per the format requested in the voter system prompt) into the
     structured dict shape build_voter_prompt expects for last_beliefs.
-    Missing/unparseable fields come back as None.
+    A line whose value is UNCHANGED (case-insensitive) falls back to that
+    field's value in `previous`. Missing/unparseable fields also fall back to
+    `previous`, or None if there's nothing to fall back to.
     """
     if not text:
-        return None
+        return previous
 
-    values = {}
+    raw_values = {}
     for line in text.splitlines():
         if ":" not in line:
             continue
         key, _, value = line.partition(":")
-        try:
-            values[key.strip()] = float(value.strip())
-        except ValueError:
-            continue
+        raw_values[key.strip()] = value.strip()
 
     c1 = CANDIDATE_NAMES["candidate_1"]
     c2 = CANDIDATE_NAMES["candidate_2"]
 
+    prev_level = (previous or {}).get("perceived_level", {})
+    prev_attr = (previous or {}).get("perceived_attribution", {})
+
+    def resolve(field_key, fallback):
+        raw = raw_values.get(field_key)
+        if raw is None:
+            return fallback
+        if raw.upper() == "UNCHANGED":
+            return fallback
+        try:
+            return float(raw)
+        except ValueError:
+            return fallback
+
     return {
         "perceived_level": {
-            "tolan": values.get("level_tolan"),
-            "vesper": values.get("level_vesper"),
+            "tolan": resolve("level_tolan", prev_level.get("tolan")),
+            "vesper": resolve("level_vesper", prev_level.get("vesper")),
         },
         "perceived_attribution": {
             "candidate_1": {
-                "tolan": values.get(f"{c1}_attribution_tolan"),
-                "vesper": values.get(f"{c1}_attribution_vesper"),
+                "tolan": resolve(f"{c1}_attribution_tolan", prev_attr.get("candidate_1", {}).get("tolan")),
+                "vesper": resolve(f"{c1}_attribution_vesper", prev_attr.get("candidate_1", {}).get("vesper")),
             },
             "candidate_2": {
-                "tolan": values.get(f"{c2}_attribution_tolan"),
-                "vesper": values.get(f"{c2}_attribution_vesper"),
+                "tolan": resolve(f"{c2}_attribution_tolan", prev_attr.get("candidate_2", {}).get("tolan")),
+                "vesper": resolve(f"{c2}_attribution_vesper", prev_attr.get("candidate_2", {}).get("vesper")),
             },
         },
     }

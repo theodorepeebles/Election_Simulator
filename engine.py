@@ -110,6 +110,7 @@ def run_simulation():
         for key in candidate_keys
     }
     voters = [Voter(v, NUM_ROUNDS, VOTER_EXPLANATION_WORD_BUDGET) for v in voter_dicts]
+    voters_by_id = {v.voter_id: v for v in voters}
     last_beliefs_by_voter = {v.voter_id: None for v in voters}
 
     event_log = {"seed": seed, "ground_truth": ground_truth, "voter_dicts": voter_dicts, "rounds": []}
@@ -127,7 +128,14 @@ def run_simulation():
         )
 
         for voter_id, poll in polls.items():
-            last_beliefs_by_voter[voter_id] = parse_private_perceptions(poll.get("private_perceptions"))
+            previous = last_beliefs_by_voter[voter_id]
+            if previous is None:
+                v = voters_by_id[voter_id]
+                previous = {
+                    "perceived_level": v.voter["perceived_level"],
+                    "perceived_attribution": v.voter["perceived_attribution"],
+                }
+            last_beliefs_by_voter[voter_id] = parse_private_perceptions(poll.get("private_perceptions"), previous)
 
         event_log["rounds"].append({
             "round": round_number,
