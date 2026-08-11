@@ -14,8 +14,8 @@ CANDIDATE_MAGNITUDE_MIN = 10
 CANDIDATE_MAGNITUDE_MAX = 20
 
 # range for each voters' perception noise
-LEVEL_NOISE_STD = 6
-ATTRIBUTION_NOISE_STD = 16
+LEVEL_NOISE_STD = 4
+ATTRIBUTION_NOISE_STD = 8
 
 CANDIDATE_NAMES = {"candidate_1": "Reyes", "candidate_2": "Calder"}
 
