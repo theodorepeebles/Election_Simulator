@@ -5,6 +5,10 @@ def _other_candidate(candidate_key):
     return "candidate_2" if candidate_key == "candidate_1" else "candidate_1"
 
 
+def _fmt(value):
+    return f"{value:.1f}" if isinstance(value, (int, float)) else "unknown"
+
+
 def format_ground_truth_table(ground_truth):
     c1 = CANDIDATE_NAMES["candidate_1"]
     c2 = CANDIDATE_NAMES["candidate_2"]
@@ -100,12 +104,12 @@ Tolan weight: {w['tolan']}
 Vesper weight: {w['vesper']}
 
 As of right now, your own impression is:
-Current level of Tolan: {lvl['tolan']}
-Current level of Vesper: {lvl['vesper']}
-How responsible {candidate_a} is for the recent change in Tolan: {attr['candidate_1']['tolan']}
-How responsible {candidate_a} is for the recent change in Vesper: {attr['candidate_1']['vesper']}
-How responsible {candidate_b} is for the recent change in Tolan: {attr['candidate_2']['tolan']}
-How responsible {candidate_b} is for the recent change in Vesper: {attr['candidate_2']['vesper']}
+Current level of Tolan: {_fmt(lvl['tolan'])}
+Current level of Vesper: {_fmt(lvl['vesper'])}
+How responsible {candidate_a} is for the recent change in Tolan: {_fmt(attr['candidate_1']['tolan'])}
+How responsible {candidate_a} is for the recent change in Vesper: {_fmt(attr['candidate_1']['vesper'])}
+How responsible {candidate_b} is for the recent change in Tolan: {_fmt(attr['candidate_2']['tolan'])}
+How responsible {candidate_b} is for the recent change in Vesper: {_fmt(attr['candidate_2']['vesper'])}
 
 Your goal is to vote for whichever candidate you believe will produce the
 higher future value of Tolan and Vesper, weighted by how much you
@@ -122,7 +126,7 @@ finished thinking should you give your response, using the markers below,
 in this exact order, each on its own line before the content that follows
 it:
 
-MY VOTE GOES TO:
+MY VOTE GOES TO: ({candidate_a}/{candidate_b})
 EXPLANATION:
 PRIVATE PERCEPTIONS:
 
@@ -161,12 +165,12 @@ def build_voter_prompt(
             else "As of last round, your belief was"
         )
         last_belief_block = f"""{label}:
-level_tolan: {lvl['tolan']}
-level_vesper: {lvl['vesper']}
-{candidate_a}_attribution_tolan: {attr['candidate_1']['tolan']}
-{candidate_a}_attribution_vesper: {attr['candidate_1']['vesper']}
-{candidate_b}_attribution_tolan: {attr['candidate_2']['tolan']}
-{candidate_b}_attribution_vesper: {attr['candidate_2']['vesper']}"""
+level_tolan: {_fmt(lvl['tolan'])}
+level_vesper: {_fmt(lvl['vesper'])}
+{candidate_a}_attribution_tolan: {_fmt(attr['candidate_1']['tolan'])}
+{candidate_a}_attribution_vesper: {_fmt(attr['candidate_1']['vesper'])}
+{candidate_b}_attribution_tolan: {_fmt(attr['candidate_2']['tolan'])}
+{candidate_b}_attribution_vesper: {_fmt(attr['candidate_2']['vesper'])}"""
 
     statements_block = (
         f"{candidate_a}'s statement this round:\n{candidate_a_statement}\n\n"
@@ -181,7 +185,7 @@ level_vesper: {lvl['vesper']}
         )
         closing = (
             "Cast your final vote. Use only the markers below, in order:\n\n"
-            "MY VOTE GOES TO:\n"
+            f"MY VOTE GOES TO: ({candidate_a}/{candidate_b})\n"
             "EXPLANATION:\n\n"
             f"Your explanation should be no more than {explanation_word_budget} words."
         )
@@ -191,12 +195,12 @@ level_vesper: {lvl['vesper']}
         initial_lvl = voter["perceived_level"]
         initial_attr = voter["perceived_attribution"]
         initial_block = f"""Your initial impression, before any statements, was:
-level_tolan: {initial_lvl['tolan']}
-level_vesper: {initial_lvl['vesper']}
-{candidate_a}_attribution_tolan: {initial_attr['candidate_1']['tolan']}
-{candidate_a}_attribution_vesper: {initial_attr['candidate_1']['vesper']}
-{candidate_b}_attribution_tolan: {initial_attr['candidate_2']['tolan']}
-{candidate_b}_attribution_vesper: {initial_attr['candidate_2']['vesper']}"""
+level_tolan: {_fmt(initial_lvl['tolan'])}
+level_vesper: {_fmt(initial_lvl['vesper'])}
+{candidate_a}_attribution_tolan: {_fmt(initial_attr['candidate_1']['tolan'])}
+{candidate_a}_attribution_vesper: {_fmt(initial_attr['candidate_1']['vesper'])}
+{candidate_b}_attribution_tolan: {_fmt(initial_attr['candidate_2']['tolan'])}
+{candidate_b}_attribution_vesper: {_fmt(initial_attr['candidate_2']['vesper'])}"""
         closing = "State which candidate you currently prefer, why, and your updated\nperceptions."
         next_round_note = None
         if round_number == num_rounds - 1:
