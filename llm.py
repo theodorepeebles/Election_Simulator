@@ -1,13 +1,30 @@
 import json
+import os
 
 import requests
 
+OLLAMA_URL = "https://ollama.com/api/generate"
+
+
+def verify_api_key() -> str:
+    """
+    Returns OLLAMA_API_KEY from the environment, raising if it is unset or blank.
+    Export it before running, e.g. `export OLLAMA_API_KEY=...`.
+    """
+    key = os.environ.get("OLLAMA_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError(
+            "OLLAMA_API_KEY is not set. Export it in your terminal before running, "
+            "e.g. `export OLLAMA_API_KEY=your-key` (PowerShell: `$env:OLLAMA_API_KEY = 'your-key'`)."
+        )
+    return key
+
 
 # Will be replaced with a wrapper for common LLM APIs.
-def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "qwen3:8b", think: bool = False) -> str:
+def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "deepseek-v4-flash:cloud", think: bool = False) -> str:
     """
-    POSTs prompt to Ollama's local HTTP server, streaming the response and
-    printing each token to the console live as it arrives.
+    POSTs prompt to Ollama's cloud API, streaming the response and printing
+    each token to the console live as it arrives.
     Returns:
         the stripped, full LLM response.
     """
@@ -22,7 +39,11 @@ def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "qwen
         body["format"] = fmt
 
     try:
-        response = requests.post("http://localhost:11434/api/generate", json=body, timeout=150, stream=True)
+        headers = {"Authorization": f"Bearer {verify_api_key()}"}
+        response = requests.post(OLLAMA_URL, json=body, headers=headers, timeout=150, stream=True)
+
+        if response.status_code in (401, 403):
+            raise RuntimeError(f"Ollama rejected OLLAMA_API_KEY ({response.status_code}). Check the key at https://ollama.com/settings/keys.")
 
         # This forces an exception if Ollama returns a 500 Internal Server Error
         response.raise_for_status()
@@ -47,9 +68,9 @@ def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "qwen
         return full_response.strip()
 
     except requests.exceptions.Timeout:
-        raise RuntimeError("Ollama API timed out after 150 seconds. The server might be hung.")
+        raise RuntimeError("Ollama API timed out after 150 seconds.")
     except requests.exceptions.ConnectionError:
-        raise RuntimeError("Could not connect to Ollama. Did the server crash?")
+        raise RuntimeError(f"Could not connect to {OLLAMA_URL}. Check your network connection.")
     except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Ollama API error: {e}")
 
