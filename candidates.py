@@ -1,7 +1,7 @@
 from prompts import build_politician_system_prompt, build_politician_round_prompt
 from llm import ask_llm, extract_marked_fields
 
-STATEMENT_MARKERS = ["STATEMENT:"]
+CANDIDATE_MARKERS = ["PLAN:", "STATEMENT:"]
 
 
 class Candidate:
@@ -16,4 +16,4 @@ class Candidate:
     def give_statement(self, round_number, history_text=""):
         prompt = build_politician_round_prompt(round_number, self.num_rounds, history_text)
         raw = ask_llm(prompt, self.system_prompt)
-        return extract_marked_fields(raw, STATEMENT_MARKERS)
+        return extract_marked_fields(raw, CANDIDATE_MARKERS)
