@@ -133,12 +133,12 @@ PRIVATE PERCEPTIONS:
 Your explanation should be no more than {explanation_word_budget} words.
 Under PRIVATE PERCEPTIONS, report your updated numeric impressions in
 exactly this format, one per line:
-level_tolan: #
-level_vesper: #
-{candidate_a}_attribution_tolan: #
-{candidate_a}_attribution_vesper: #
-{candidate_b}_attribution_tolan: #
-{candidate_b}_attribution_vesper: #
+level_tolan: #/UNCHANGED
+level_vesper: #/UNCHANGED
+{candidate_a}_attribution_tolan: #/UNCHANGED
+{candidate_a}_attribution_vesper: #/UNCHANGED
+{candidate_b}_attribution_tolan: #/UNCHANGED
+{candidate_b}_attribution_vesper: #/UNCHANGED
 For any individual value that hasn't changed, write UNCHANGED instead of a
 number on that line."""
 
