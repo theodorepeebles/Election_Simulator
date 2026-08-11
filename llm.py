@@ -21,7 +21,7 @@ def verify_api_key() -> str:
 
 
 # Will be replaced with a wrapper for common LLM APIs.
-def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "deepseek-v4-flash:cloud", think: bool = False) -> str:
+def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "nemotron-3-super:cloud", think: bool = False) -> str:
     """
     POSTs prompt to Ollama's cloud API, streaming the response and printing
     each token to the console live as it arrives.
@@ -42,8 +42,11 @@ def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "deep
         headers = {"Authorization": f"Bearer {verify_api_key()}"}
         response = requests.post(OLLAMA_URL, json=body, headers=headers, timeout=150, stream=True)
 
-        if response.status_code in (401, 403):
-            raise RuntimeError(f"Ollama rejected OLLAMA_API_KEY ({response.status_code}). Check the key at https://ollama.com/settings/keys.")
+        if response.status_code == 401:
+            raise RuntimeError("Ollama rejected OLLAMA_API_KEY (401). Check the key at https://ollama.com/settings/keys.")
+        if response.status_code == 403:
+            # The key authenticated; something else is forbidden (often model access).
+            raise RuntimeError(f"Ollama accepted the key but forbade this request for model '{model}' (403): {response.text.strip()}")
 
         # This forces an exception if Ollama returns a 500 Internal Server Error
         response.raise_for_status()
