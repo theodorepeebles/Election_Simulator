@@ -40,6 +40,11 @@ def render_event_log(event_log):
 
     emit(f"=== SIMULATION RUN (seed={seed}) ===")
 
+    model = event_log.get("model")
+    if model:
+        emit()
+        emit(f"MODEL: {model}")
+
     ground_truth = event_log.get("ground_truth")
     if ground_truth:
         emit()
