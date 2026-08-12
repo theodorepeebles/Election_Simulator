@@ -1,0 +1,40 @@
+ELECTION SIMULATOR - TODO
+=========================
+
+BUGS / BROKEN BEHAVIOR
+----------------------
+[ ] Voters leave their perceptions UNCHANGED for the whole simulation.
+    Every voter emits "UNCHANGED" on every PRIVATE PERCEPTIONS field, so
+    parse_private_perceptions() (voters.py) always falls back to `previous`
+    and beliefs never move off the initial noisy draw. Nothing in the run
+    actually updates them. Need to figure out whether this is a prompt
+    problem (the UNCHANGED escape hatch is too easy / too encouraged) or a
+    model problem, and fix accordingly.
+
+[ ] Related: voters may care so much about their own noisy perceptions that
+    the whole thing breaks - candidate statements can't shift anyone, so the
+    election is decided by the initial noise draw. Investigate how heavily
+    the voter prompt weights private perception vs. what candidates say, and
+    whether that weighting is what's freezing beliefs.
+
+UI VIEWER
+---------
+[ ] Finish the candidate claims panel in the UI viewer.
+
+MEASUREMENT / LYING
+-------------------
+[ ] Need a way to make it clear whether the LLMs are choosing to lie.
+    Idea: give candidates an explicit labeled choice each round - LIE /
+    MISLEAD / TELL THE TRUTH - so the intent is recorded rather than
+    inferred from comparing statements against ground truth.
+
+FEATURES TO ADD
+---------------
+[ ] Voter discussion board - let voters see and respond to each other
+    between rounds instead of only reacting to candidate statements.
+
+FUTURE
+------
+[ ] Newscaster LLM: an LLM that summarizes what happened each round in
+    news-report form, with the voter LLMs able to read that summary as
+    another information channel.
