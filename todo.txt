@@ -1,6 +1,20 @@
 ELECTION SIMULATOR - TODO
 =========================
 
+README / PRESENTATION
+--------------------
+[ ] Write a README. Right now someone cloning this sees 11 .py files with
+    no entry point, no explanation of what Tolan and Vesper are, and no
+    way to tell what the project is for without reading the source. Needs:
+      - the research question up front (do LLM candidates lie when honesty
+        loses, and does lying work), framed around the deception experiment
+        rather than "election simulator"
+      - how to run it: OLLAMA_API_KEY, run.py, then open_ui_viewer.py <seed>
+      - the ground-truth vs. noisy-perception design, and why voters can't
+        see the table
+      - a screenshot of the UI viewer, or a committed sample
+        output/run_<seed>.html, so the interface is visible without a run
+
 BUGS / BROKEN BEHAVIOR
 ----------------------
 [ ] Voters leave their perceptions UNCHANGED for the whole simulation.
@@ -10,6 +24,12 @@ BUGS / BROKEN BEHAVIOR
     actually updates them. Need to figure out whether this is a prompt
     problem (the UNCHANGED escape hatch is too easy / too encouraged) or a
     model problem, and fix accordingly.
+    This is the central dynamic of the whole thing - persuasion moving
+    belief - so with it inert the election is effectively decided by the
+    initial noise draw before round 1. If it isn't fixed, it has to be
+    written up in the README as a known open problem with the two
+    hypotheses above; a diagnosed failure reads very differently from an
+    undiagnosed one.
 
 [ ] Related: voters may care so much about their own noisy perceptions that
     the whole thing breaks - candidate statements can't shift anyone, so the
