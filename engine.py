@@ -6,7 +6,7 @@ from candidates import Candidate
 from voters import Voter, parse_private_perceptions
 
 MODEL = "gemma4:31b-cloud"
-NUM_ROUNDS = 3
+NUM_ROUNDS = 5
 CANDIDATE_WORD_BUDGET = 150
 VOTER_EXPLANATION_WORD_BUDGET = 80
 
