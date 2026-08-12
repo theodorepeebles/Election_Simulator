@@ -45,6 +45,10 @@ Here is the true record of Larran under your and your opponent's terms:
 
 {table}
 
+For both Tolan and Vesper, higher is better: every voter is better off the
+higher these values are, and worse off the lower they are. Voters differ only
+in how much they care about each of the two.
+
 Voters do not have direct access to this table. Each voter holds their own
 private, noisy perception of the current level of Tolan and Vesper, and of
 how much each candidate is responsible for the recent changes in each. You
@@ -103,8 +107,9 @@ will privately state which candidate you currently prefer, along with a
 short explanation, and privately update your own impression of the state
 of Larran. In the last round, you will cast your final vote.
 
-Two things matter to you about Larran: Tolan and Vesper. How much you
-personally care about each is fixed and is as follows:
+Two things matter to you about Larran: Tolan and Vesper. For both, higher is
+better: you are better off the higher each value is, and worse off the lower
+it is. How much you personally care about each is fixed and is as follows:
 Tolan weight: {w['tolan']}
 Vesper weight: {w['vesper']}
 
