@@ -21,7 +21,7 @@ def verify_api_key() -> str:
 
 
 # Will be replaced with a wrapper for common LLM APIs.
-def ask_llm(prompt: str, system: str, fmt: str | None = None, model: str = "nemotron-3-super:cloud", think: bool = False) -> str:
+def ask_llm(prompt: str, system: str, model: str, fmt: str | None = None, think: bool = False) -> str:
     """
     POSTs prompt to Ollama's cloud API, streaming the response and printing
     each token to the console live as it arrives.
