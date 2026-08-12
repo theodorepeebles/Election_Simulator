@@ -1,0 +1,7 @@
+# Election Simulator dependencies
+# Install with: pip install -r requirements.txt
+#
+# The simulation core is pure standard library; requests is only used by
+# llm.py to stream completions from the Ollama cloud API.
+
+requests==2.34.2
