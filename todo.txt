@@ -3,17 +3,15 @@ ELECTION SIMULATOR - TODO
 
 README / PRESENTATION
 --------------------
-[ ] Write a README. Right now someone cloning this sees 11 .py files with
-    no entry point, no explanation of what Tolan and Vesper are, and no
-    way to tell what the project is for without reading the source. Needs:
-      - the research question up front (do LLM candidates lie when honesty
-        loses, and does lying work), framed around the deception experiment
-        rather than "election simulator"
-      - how to run it: OLLAMA_API_KEY, run.py, then open_ui_viewer.py <seed>
-      - the ground-truth vs. noisy-perception design, and why voters can't
-        see the table
-      - a screenshot of the UI viewer, or a committed sample
-        output/run_<seed>.html, so the interface is visible without a run
+[ ] Keep README.md updated as the code changes. It drifted badly once
+    already (had NUM_VOTERS=3, referred to viewer.py, claimed the voter
+    prompt forbids numbers in EXPLANATION, and predated the whole HTML
+    viewer and lie_pressure_test.py), so re-check it whenever constants,
+    filenames, or prompt contents move.
+
+[ ] Add a screenshot of the UI viewer to the README, or commit a sample
+    output/run_<seed>.html, so the interface is visible without running
+    anything.
 
 BUGS / BROKEN BEHAVIOR
 ----------------------
