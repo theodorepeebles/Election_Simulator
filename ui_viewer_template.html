@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Election Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=Azeret+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper:       oklch(0.955 0.008 85);
+    --paper-lift:  oklch(0.975 0.006 85);
+    --paper-panel: oklch(0.965 0.008 85);
+    --paper-card:  oklch(0.99 0.004 85);
+    --rule:        oklch(0.86 0.01 85);
+    --rule-soft:   oklch(0.91 0.008 85);
+    --ink:         oklch(0.24 0.02 260);
+    --ink-strong:  oklch(0.2 0.02 260);
+    --ink-mid:     oklch(0.45 0.02 260);
+    --ink-soft:    oklch(0.55 0.02 260);
+    --ink-faint:   oklch(0.62 0.02 260);
+    --serif: Spectral, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+    --mono: 'Azeret Mono', ui-monospace, 'Cascadia Mono', 'SF Mono', Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @keyframes blink { 0%, 45% { opacity: 1 } 50%, 100% { opacity: 0 } }
+  @keyframes pulse { 0%, 100% { opacity: 0.35 } 50% { opacity: 1 } }
+
+  .om-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+  .om-scroll::-webkit-scrollbar-thumb { background: oklch(0.82 0.01 85); border-radius: 4px; }
+  .om-scroll::-webkit-scrollbar-track { background: transparent; }
+
+  .mono { font-family: var(--mono); }
+
+  /* ---- shell -------------------------------------------------------- */
+  .shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+  header.om {
+    display: flex; align-items: center; gap: 24px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-lift);
+    position: sticky; top: 0; z-index: 20;
+  }
+  .wordmark { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.1; }
+
+  .facts {
+    display: flex; gap: 18px;
+    font-family: var(--mono); font-size: 11px; color: var(--ink-mid);
+    border-left: 1px solid oklch(0.88 0.01 85); padding-left: 22px;
+  }
+  .fact { display: flex; flex-direction: column; gap: 3px; }
+  .fact-key { color: var(--ink-faint); font-size: 9px; letter-spacing: 0.1em; }
+
+  .status {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 11px; border-radius: 999px;
+    background: oklch(0.93 0.012 85); border: 1px solid oklch(0.87 0.01 85);
+    font-family: var(--mono); font-size: 11px; color: oklch(0.38 0.02 260);
+  }
+  .status-dot { width: 7px; height: 7px; border-radius: 999px; animation: pulse 1.4s ease-in-out infinite; }
+
+  .btn {
+    font-family: var(--mono); font-size: 11px; padding: 6px 11px;
+    border: 1px solid oklch(0.82 0.01 85); background: transparent;
+    color: oklch(0.4 0.02 260); border-radius: 3px; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--ink-soft); }
+  .btn-primary {
+    padding: 6px 14px; letter-spacing: 0.06em;
+    border: 1px solid oklch(0.72 0.02 260);
+    background: var(--ink); color: oklch(0.96 0.006 85);
+  }
+  .btn-primary:hover { background: oklch(0.34 0.03 260); border-color: oklch(0.72 0.02 260); }
+  .btn-file {
+    font-size: 10px; letter-spacing: 0.05em;
+    border: 1px dashed oklch(0.78 0.01 85); color: oklch(0.5 0.02 260);
+  }
+  .btn-file:hover { border-color: var(--ink-soft); color: oklch(0.3 0.02 260); }
+  .btn-mini { font-size: 10px; padding: 4px 9px; border-color: oklch(0.8 0.01 85); color: oklch(0.42 0.02 260); letter-spacing: 0.05em; }
+  .btn-mini:hover { border-color: oklch(0.5 0.02 260); }
+
+  /* ---- three-column body -------------------------------------------- */
+  .body-grid {
+    display: grid;
+    grid-template-columns: 320px minmax(420px, 1fr) 344px;
+    align-items: start;
+    flex: 1; min-width: 1180px; min-height: 0;
+  }
+
+  aside.om {
+    position: sticky; top: 61px; align-self: start;
+    height: calc(100vh - 61px); overflow-y: auto;
+    background: var(--paper-panel);
+  }
+  aside.left  { padding: 18px 18px 24px; border-right: 1px solid var(--rule); }
+  aside.right { padding: 18px 18px 30px; border-left: 1px solid var(--rule); }
+
+  .spectator { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .spectator-dot { width: 6px; height: 6px; background: oklch(0.55 0.15 20); border-radius: 999px; }
+  .spectator-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; color: oklch(0.5 0.1 20); }
+
+  aside.om h2 { font-size: 17px; font-weight: 600; margin: 0 0 3px; letter-spacing: -0.01em; }
+  .lede { font-size: 12.5px; line-height: 1.5; color: oklch(0.48 0.02 260); margin: 0 0 16px; text-wrap: pretty; }
+
+  .section-key {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em;
+    color: oklch(0.58 0.02 260); margin-bottom: 9px;
+  }
+
+  .truth-shell { border: 1px solid oklch(0.85 0.01 85); background: var(--paper-card); border-radius: 4px; overflow: hidden; }
+  .truth-row { padding: 13px 14px; border-bottom: 1px solid var(--rule-soft); }
+  .truth-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+  .truth-metric { font-size: 15px; font-weight: 600; letter-spacing: 0.02em; }
+  .truth-levels {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    font-family: var(--mono); font-size: 11px; margin-bottom: 11px;
+  }
+  .truth-level { display: flex; flex-direction: column; gap: 3px; }
+  .truth-level-key { font-size: 9px; letter-spacing: 0.1em; color: oklch(0.6 0.02 260); }
+  .attr-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 5px 8px; border-radius: 3px; margin-bottom: 5px;
+    font-family: var(--mono);
+  }
+  .attr-row:last-child { margin-bottom: 0; }
+  .attr-name { font-size: 10px; letter-spacing: 0.06em; }
+  .attr-val { font-size: 13px; font-weight: 500; }
+  .truth-foot {
+    padding: 10px 14px; font-family: var(--mono); font-size: 10px; line-height: 1.6;
+    color: var(--ink-soft); background: var(--paper);
+  }
+
+  .divider { margin-top: 18px; padding-top: 16px; border-top: 1px solid oklch(0.88 0.01 85); }
+
+  .todo-box {
+    border: 1px dashed oklch(0.78 0.03 20); border-radius: 4px;
+    padding: 11px 12px; background: oklch(0.965 0.012 60);
+    font-family: var(--mono); font-size: 10px; line-height: 1.7; color: oklch(0.45 0.05 40);
+  }
+  .todo-tag {
+    display: inline-block; margin-bottom: 6px; padding: 1px 6px; border-radius: 2px;
+    background: oklch(0.9 0.05 45); color: oklch(0.42 0.1 35);
+    font-size: 9px; letter-spacing: 0.14em;
+  }
+  .claim-row {
+    display: flex; gap: 9px; align-items: baseline; padding: 6px 0;
+    border-bottom: 1px dotted oklch(0.88 0.01 85);
+    font-family: var(--mono); font-size: 11px;
+  }
+
+  /* ---- centre column ------------------------------------------------ */
+  main.om { padding: 0; min-width: 0; display: flex; flex-direction: column; height: calc(100vh - 61px); }
+
+  .podiums { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--rule); }
+  .podium { padding: 18px 20px 20px; min-height: 210px; }
+  .podium-a { border-right: 1px solid oklch(0.9 0.008 85); background: oklch(0.972 0.005 250); }
+  .podium-b { background: oklch(0.972 0.006 45); }
+  .podium-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
+  .podium-name { font-size: 17px; font-weight: 600; }
+  .podium-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; }
+  .podium-meta { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); }
+  .podium-text {
+    font-size: 15px; line-height: 1.62; margin: 0; color: var(--ink);
+    text-wrap: pretty; white-space: pre-wrap;
+  }
+
+  .trace-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 9px 20px; border-bottom: 1px solid oklch(0.88 0.01 85);
+    background: oklch(0.945 0.01 85);
+  }
+  .trace-bar-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; color: oklch(0.5 0.02 260); }
+  .trace-bar-stats {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--mono); font-size: 10px; color: oklch(0.5 0.02 260);
+  }
+
+  .feed { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 20px 40px; }
+  .entry { padding: 16px 0 18px; border-bottom: 1px solid oklch(0.9 0.008 85); }
+  .entry-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 9px; }
+  .entry-round { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: oklch(0.64 0.02 260); }
+  .entry-name { font-size: 14px; font-weight: 600; }
+  .entry-role { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; color: var(--ink-faint); }
+  .entry-meta { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); }
+  .entry-flag {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+    padding: 1px 6px; border-radius: 2px;
+    background: oklch(0.9 0.06 30); color: oklch(0.42 0.12 28);
+  }
+
+  .plan {
+    margin: 0 0 12px; padding: 11px 13px; border-radius: 2px;
+    border-left: 2px solid oklch(0.72 0.06 20);
+    background: repeating-linear-gradient(135deg,
+      oklch(0.93 0.012 85) 0px, oklch(0.93 0.012 85) 6px,
+      oklch(0.945 0.01 85) 6px, oklch(0.945 0.01 85) 12px);
+  }
+  .plan-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .plan-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: oklch(0.48 0.1 20); }
+  .plan-note { font-family: var(--mono); font-size: 9px; color: oklch(0.6 0.02 260); }
+  .plan-text {
+    margin: 0; font-size: 13.5px; line-height: 1.6; color: oklch(0.42 0.03 260);
+    font-style: italic; text-wrap: pretty; white-space: pre-wrap;
+  }
+  .plan-redacted {
+    margin: 0 0 12px; padding: 8px 13px; border-radius: 2px; cursor: pointer;
+    background: oklch(0.93 0.012 85); border-left: 2px solid oklch(0.78 0.03 20);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: oklch(0.55 0.04 20);
+  }
+  .plan-redacted:hover { background: oklch(0.91 0.016 85); }
+
+  .public-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: oklch(0.5 0.02 260); margin-bottom: 6px; }
+  .public-text {
+    margin: 0; font-size: 16px; line-height: 1.66; color: var(--ink-strong);
+    text-wrap: pretty; white-space: pre-wrap;
+  }
+  .caret { animation: blink 1s step-end infinite; }
+
+  .ballot { display: flex; align-items: center; gap: 9px; margin-top: 10px; font-family: var(--mono); font-size: 11px; }
+  .ballot-key { letter-spacing: 0.1em; font-size: 9px; color: oklch(0.6 0.02 260); }
+  .ballot-vote { padding: 3px 9px; border-radius: 3px; font-weight: 500; }
+
+  .feed-foot { padding: 22px 0; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: oklch(0.68 0.02 260); }
+
+  .transport {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 20px; border-top: 1px solid var(--rule);
+    background: var(--paper-lift); position: sticky; bottom: 0;
+  }
+  .transport-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: var(--ink-soft); }
+  .round-chip {
+    font-family: var(--mono); font-size: 11px; width: 30px; height: 27px;
+    border-radius: 3px; cursor: pointer; border: 1px solid oklch(0.83 0.01 85);
+    background: transparent; color: var(--ink-mid);
+  }
+  .round-chip.on { background: var(--ink); color: oklch(0.96 0.006 85); border-color: var(--ink); }
+  .rail { flex: 1; height: 3px; background: oklch(0.89 0.01 85); border-radius: 999px; overflow: hidden; }
+  .rail-fill { height: 100%; background: oklch(0.5 0.03 260); }
+
+  /* ---- jury box ------------------------------------------------------ */
+  .juror {
+    border: 1px solid oklch(0.88 0.01 85); background: var(--paper-card);
+    border-radius: 4px; padding: 11px 12px; cursor: pointer; margin-bottom: 8px;
+  }
+  .juror:hover { border-color: oklch(0.65 0.02 260); }
+  .juror-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .juror-id { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+  .juror-vote { font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 3px; }
+  .weight-bar {
+    display: flex; height: 6px; border-radius: 999px; overflow: hidden;
+    background: oklch(0.9 0.01 85); margin-bottom: 5px;
+  }
+  .weight-key {
+    display: flex; justify-content: space-between; gap: 8px;
+    font-family: var(--mono); font-size: 9.5px; color: var(--ink-soft); margin-bottom: 8px;
+  }
+  .juror-reason { margin: 0; font-size: 12.5px; line-height: 1.5; color: oklch(0.42 0.02 260); text-wrap: pretty; }
+  .juror-open { margin-top: 10px; padding-top: 10px; border-top: 1px dotted oklch(0.85 0.01 85); }
+  .juror-open-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; color: oklch(0.5 0.1 20); margin-bottom: 7px; }
+  .perc-row {
+    display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: baseline;
+    font-family: var(--mono); font-size: 10.5px; padding: 3px 0;
+  }
+  .perc-label { color: oklch(0.5 0.02 260); }
+  .perc-belief { color: oklch(0.28 0.02 260); min-width: 42px; text-align: right; }
+  .perc-truth  { color: var(--ink-faint); min-width: 42px; text-align: right; }
+  .perc-legend {
+    display: grid; grid-template-columns: 1fr auto auto; gap: 10px;
+    font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.1em;
+    color: oklch(0.68 0.02 260); padding-top: 5px;
+  }
+  .perc-legend span:not(:first-child) { min-width: 42px; text-align: right; }
+
+  .trend-row { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+  .trend-label { font-family: var(--mono); font-size: 10px; color: oklch(0.6 0.02 260); width: 16px; }
+  .trend-bar { flex: 1; display: flex; height: 16px; border-radius: 2px; overflow: hidden; background: oklch(0.91 0.01 85); }
+  .trend-score { font-family: var(--mono); font-size: 10px; color: oklch(0.5 0.02 260); width: 30px; text-align: right; }
+  .result-line { margin-top: 12px; font-family: var(--mono); font-size: 10.5px; line-height: 1.6; color: var(--ink-mid); }
+  .result-sub { margin-top: 4px; font-family: var(--mono); font-size: 9.5px; color: var(--ink-faint); }
+
+  .empty {
+    display: flex; align-items: center; justify-content: center;
+    height: 60vh; font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.08em; color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="om">
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div class="wordmark">Election Simulator</div>
+    </div>
+    <div class="facts">
+      <div class="fact"><span class="fact-key">SEED</span><span id="f-seed">—</span></div>
+      <div class="fact"><span class="fact-key">MODEL</span><span id="f-model">—</span></div>
+      <div class="fact"><span class="fact-key">PANEL</span><span id="f-panel">—</span></div>
+      <div class="fact"><span class="fact-key">ROUNDS</span><span id="f-rounds">—</span></div>
+    </div>
+
+    <div style="flex: 1;"></div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">LOADING LOG</span>
+      </div>
+      <button class="btn btn-primary" id="btnPlay">PAUSE</button>
+      <button class="btn" id="btnSpeed">1×</button>
+      <button class="btn" id="btnRestart">RESTART</button>
+      <label class="btn btn-file">LOAD LOG<input type="file" accept="application/json,.json" id="fileInput" style="display: none;" /></label>
+    </div>
+  </header>
+
+  <div class="empty" id="emptyState" style="display: none;">NO RUN LOADED — USE LOAD LOG TO OPEN AN output/run_&lt;seed&gt;.json</div>
+
+  <div class="body-grid" id="bodyGrid">
+
+    <aside class="om left om-scroll">
+      <div class="spectator">
+        <span class="spectator-dot"></span>
+        <span class="spectator-label">SPECTATOR ONLY</span>
+      </div>
+      <h2>Ground truth</h2>
+      <p class="lede">Generated from the seed. Both candidates hold this table. No voter has ever seen it.</p>
+
+      <div class="truth-shell">
+        <div id="truthRows"></div>
+        <div class="truth-foot">Attributions sum to change<br />by construction, not convention.</div>
+      </div>
+
+      <div class="divider">
+        <div class="section-key">CLAIMS ON THE RECORD</div>
+        <p class="lede" style="margin-bottom: 10px;">Each figure a candidate asserts about their own contribution, in order. Quoted opponent figures excluded. Compare against the table above; the interface takes no position.</p>
+        <div id="claimLedger"></div>
+      </div>
+    </aside>
+
+    <main class="om">
+      <div class="podiums">
+        <section class="podium podium-a">
+          <div class="podium-head">
+            <div style="display: flex; align-items: baseline; gap: 9px;">
+              <span class="podium-name" id="podA-name">—</span>
+              <span class="podium-key" id="podA-key">CANDIDATE_1</span>
+            </div>
+            <span class="podium-meta" id="podA-meta">—</span>
+          </div>
+          <p class="podium-text" id="podA-text"></p>
+        </section>
+        <section class="podium podium-b">
+          <div class="podium-head">
+            <div style="display: flex; align-items: baseline; gap: 9px;">
+              <span class="podium-name" id="podB-name">—</span>
+              <span class="podium-key" id="podB-key">CANDIDATE_2</span>
+            </div>
+            <span class="podium-meta" id="podB-meta">—</span>
+          </div>
+          <p class="podium-text" id="podB-text"></p>
+        </section>
+      </div>
+
+      <div class="trace-bar">
+        <div class="trace-bar-key">GENERATION TRACE</div>
+        <div class="trace-bar-stats">
+          <span id="traceWords"></span>
+          <span id="traceEvent"></span>
+          <button class="btn btn-mini" id="btnPlans">REDACT PLANS</button>
+        </div>
+      </div>
+
+      <div class="feed om-scroll" id="feed"></div>
+
+      <div class="transport">
+        <span class="transport-key">ROUND</span>
+        <div style="display: flex; gap: 6px;" id="roundChips"></div>
+        <div class="rail"><div class="rail-fill" id="railFill" style="width: 0%;"></div></div>
+        <span class="mono" style="font-size: 10px; color: var(--ink-soft);" id="eventCounter"></span>
+      </div>
+    </main>
+
+    <aside class="om right om-scroll">
+      <div class="spectator">
+        <span class="spectator-dot"></span>
+        <span class="spectator-label">SPECTATOR ONLY</span>
+      </div>
+      <h2>Jury box</h2>
+      <p class="lede" style="margin-bottom: 15px;">Fixed weights, private perceptions. Candidates see votes and qualitative reasons only.</p>
+
+      <div id="jurors"></div>
+
+      <div class="divider">
+        <div class="section-key" style="margin-bottom: 11px;">PREFERENCE BY ROUND</div>
+        <div id="trendRows"></div>
+        <div class="result-line" id="resultLine"></div>
+        <div class="result-sub" id="resultSub"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* The run log is inlined here by visualizer.py. Opening this template directly
+   leaves it null; the LOAD LOG button still accepts an output/run_<seed>.json. */
+const RUN_LOG = /*__RUN_LOG__*/null;
+
+/* ---- palette ------------------------------------------------------------ */
+const ACCENT = ['oklch(0.42 0.11 250)', 'oklch(0.45 0.12 40)'];
+const VOTE_BG = ['oklch(0.93 0.04 250)', 'oklch(0.93 0.045 45)'];
+const VOTE_BORDER = ['oklch(0.83 0.05 250)', 'oklch(0.84 0.055 45)'];
+const ATTR_BG = ['oklch(0.96 0.012 250)', 'oklch(0.96 0.014 45)'];
+const ATTR_FG = ['oklch(0.42 0.09 250)', 'oklch(0.45 0.1 40)'];
+const TREND = ['oklch(0.55 0.12 250)', 'oklch(0.58 0.13 40)'];
+const METRIC_HUE = ['oklch(0.62 0.09 250)', 'oklch(0.68 0.1 145)', 'oklch(0.66 0.11 300)', 'oklch(0.7 0.1 75)'];
+const NEUTRAL_BG = 'oklch(0.92 0.008 85)';
+const NEUTRAL_FG = 'oklch(0.55 0.02 260)';
+
+const CHARS_PER_SECOND = 190;
+const SPEEDS = [1, 2, 4, 12];
+
+/* ---- state -------------------------------------------------------------- */
+const S = {
+  log: RUN_LOG,
+  cursor: 0,
+  revealed: 0,
+  playing: true,
+  speed: 1,
+  showPlans: true,
+  openVoter: null,
+};
+
+let timeline = [];
+let lastTick = Date.now();
+let lastStructureKey = null;
+
+/* ---- helpers ------------------------------------------------------------ */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
+
+const signed = (n) => (Number(n) > 0 ? '+' : '') + Number(n).toFixed(1);
+const pct = (n) => Math.round(Number(n) * 100) + '%';
+const title = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+const words = (s) => (String(s || '').trim().match(/\S+/g) || []).length;
+
+/* Index of a candidate key in log.candidates, used to pick its accent colour. */
+function slot(key) {
+  const i = S.log.candidates.indexOf(key);
+  return i < 0 ? 0 : i;
+}
+const accentOf = (key) => ACCENT[slot(key) % ACCENT.length];
+
+/* Ordered perception keys, matching the shape visualizer.py emits. */
+function perceptionFields() {
+  const out = [];
+  S.log.metrics.forEach((m) => {
+    out.push({ key: m + '_level', label: title(m) + ' now', truth: S.log.ground_truth[m].now });
+    S.log.candidates.forEach((c) => {
+      out.push({
+        key: m + '_attr_' + c,
+        label: title(m) + ' · ' + S.log.names[c],
+        truth: S.log.ground_truth[m].attribution[c],
+      });
+    });
+  });
+  return out;
+}
+
+/* ---- timeline ----------------------------------------------------------- */
+function buildTimeline() {
+  timeline = [];
+  if (!S.log) return;
+  S.log.rounds.forEach((r) => {
+    r.statements.forEach((s) => {
+      const plan = s.plan || '';
+      const statement = s.statement || '';
+      timeline.push({
+        kind: 'statement', round: r.round, isFinal: r.is_final,
+        actor: s.candidate, name: s.name, role: s.candidate.toUpperCase(),
+        plan, statement, full: plan + statement,
+        claims: s.claims || [], words: s.words, malformed: s.malformed,
+      });
+    });
+    r.polls.forEach((p) => {
+      const explanation = p.explanation || '';
+      timeline.push({
+        kind: 'poll', round: r.round, isFinal: r.is_final,
+        actor: p.voter, name: p.name, role: r.is_final ? 'FINAL VOTE' : 'VOTER',
+        plan: '', statement: explanation, full: explanation,
+        vote: p.vote, perceptions: p.perceptions, words: p.words, malformed: p.malformed,
+      });
+    });
+  });
+  timeline.forEach((e, i) => { e.index = i; });
+}
+
+/* ---- derived frame ------------------------------------------------------ */
+function frame() {
+  const cursor = Math.min(S.cursor, timeline.length - 1);
+  const cur = timeline[cursor];
+  const revealed = Math.floor(S.revealed);
+  const shown = timeline.slice(0, cursor + 1);
+  const finished = !S.playing && cursor >= timeline.length - 1 &&
+                   revealed >= (cur ? cur.full.length : 0);
+  return { cursor, cur, revealed, shown, finished };
+}
+
+/* How much of an event's text is on screen right now. */
+function revealedLen(e, f) { return e === f.cur ? f.revealed : e.full.length; }
+function planSoFar(e, f) { return e.plan.slice(0, revealedLen(e, f)); }
+function saidSoFar(e, f) { return e.statement.slice(0, Math.max(0, revealedLen(e, f) - e.plan.length)); }
+
+/* ---- structural render -------------------------------------------------- */
+function renderStatic() {
+  const log = S.log;
+  $('f-seed').textContent = log.seed;
+  $('f-model').textContent = log.config.model;
+  $('f-panel').textContent = log.voters.length + (log.voters.length === 1 ? ' voter' : ' voters');
+  $('f-rounds').textContent = log.rounds.length + ' rounds';
+
+  ['A', 'B'].forEach((tag, i) => {
+    const key = log.candidates[i];
+    if (!key) return;
+    $('pod' + tag + '-name').textContent = log.names[key];
+    $('pod' + tag + '-name').style.color = ACCENT[i];
+    $('pod' + tag + '-key').textContent = key.toUpperCase();
+    $('pod' + tag + '-key').style.color = i === 0 ? 'oklch(0.6 0.04 250)' : 'oklch(0.62 0.05 40)';
+  });
+
+  $('truthRows').innerHTML = log.metrics.map((m) => {
+    const row = log.ground_truth[m];
+    const up = row.change >= 0;
+    const attrs = log.candidates.map((c, i) => `
+      <div class="attr-row" style="background: ${ATTR_BG[i % ATTR_BG.length]};">
+        <span class="attr-name" style="color: ${ATTR_FG[i % ATTR_FG.length]};">${esc(log.names[c])}</span>
+        <span class="attr-val" style="color: ${ATTR_FG[i % ATTR_FG.length]};">${signed(row.attribution[c])}</span>
+      </div>`).join('');
+    return `
+      <div class="truth-row">
+        <div class="truth-head">
+          <span class="truth-metric">${esc(m.toUpperCase())}</span>
+          <span class="mono" style="font-size: 11px; color: ${up ? 'oklch(0.5 0.11 145)' : 'oklch(0.52 0.14 25)'};">${signed(row.change)}</span>
+        </div>
+        <div class="truth-levels">
+          <div class="truth-level"><span class="truth-level-key">START</span><span style="font-size: 15px; color: var(--ink-mid);">${row.start.toFixed(1)}</span></div>
+          <div class="truth-level"><span class="truth-level-key">NOW</span><span style="font-size: 15px; font-weight: 500;">${row.now.toFixed(1)}</span></div>
+        </div>
+        <div>${attrs}</div>
+      </div>`;
+  }).join('');
+
+  $('roundChips').innerHTML = log.rounds.map((r) =>
+    `<button class="round-chip" data-round="${r.round}">${r.round}</button>`).join('');
+  $('roundChips').querySelectorAll('.round-chip').forEach((b) => {
+    b.addEventListener('click', () => goToRound(Number(b.dataset.round)));
+  });
+}
+
+/* TODO — candidates do not declare structured claims yet, so this ledger has
+   no data to draw. The panel and the data path (statement.claims, always []) are
+   in place: emit {cue, metric, value} per claim from the backend and swap the
+   placeholder below for the commented-out row builder. */
+function renderClaimLedger(f) {
+  const rows = [];
+  f.shown.filter((e) => e.kind === 'statement').forEach((e) => {
+    const said = saidSoFar(e, f);
+    e.claims.forEach((c) => {
+      const at = e.statement.indexOf(c.cue);
+      if (at >= 0 && said.length >= at + c.cue.length) {
+        rows.push(`
+          <div class="claim-row">
+            <span style="color: oklch(0.65 0.02 260); font-size: 9px; min-width: 16px;">R${e.round}</span>
+            <span style="color: ${accentOf(e.actor)}; min-width: 46px;">${esc(e.name)}</span>
+            <span style="color: oklch(0.3 0.02 260); flex: 1; text-align: right; white-space: pre;">${esc(c.metric)}  ${esc(c.value)}</span>
+          </div>`);
+      }
+    });
+  });
+
+  $('claimLedger').innerHTML = rows.length ? rows.slice(-14).join('') : `
+    <div class="todo-box">
+      <span class="todo-tag">TODO</span><br />
+      No structured claims in this log. Candidates currently write figures into
+      prose only, so there is nothing reliable to tabulate.<br /><br />
+      To fill this panel: have candidates emit a CLAIMS: block
+      (prompts.py / candidates.py) and pass it through as
+      <b>claims: [{cue, metric, value}]</b> per statement. Scraping the prose
+      instead would pick up figures quoted about the opponent, which this ledger
+      is meant to exclude.
+    </div>`;
+}
+
+function entryHTML(e, f, isActive) {
+  const isCandidate = e.kind === 'statement';
+  const planText = planSoFar(e, f);
+  const said = saidSoFar(e, f);
+  const color = isCandidate ? accentOf(e.actor) : 'oklch(0.35 0.02 260)';
+  const idAttr = isActive ? ' id="activeEntry"' : '';
+
+  let planBlock = '';
+  if (isCandidate && S.showPlans) {
+    planBlock = `
+      <div class="plan" data-plan-wrap style="display: ${planText ? 'block' : 'none'};">
+        <div class="plan-head">
+          <span class="plan-key">PLAN — PRIVATE</span>
+          <span class="plan-note">not shown to voters or opponent</span>
+        </div>
+        <p class="plan-text" data-plan>${esc(planText)}</p>
+      </div>`;
+  } else if (isCandidate) {
+    planBlock = `<div class="plan-redacted" data-reveal-plans>PLAN REDACTED — CLICK TO REVEAL</div>`;
+  }
+
+  const publicLabel = isCandidate
+    ? 'STATEMENT — PUBLIC'
+    : (e.isFinal ? 'FINAL BALLOT — EXPLANATION' : 'EXPLANATION — SHOWN TO CANDIDATES');
+
+  const i = e.vote ? slot(e.vote) : 0;
+  const ballot = (!isCandidate && e.vote) ? `
+    <div class="ballot" data-ballot style="display: ${said ? 'flex' : 'none'};">
+      <span class="ballot-key">MY VOTE GOES TO</span>
+      <span class="ballot-vote" style="background: ${VOTE_BG[i % VOTE_BG.length]}; color: ${ACCENT[i % ACCENT.length]};">${esc(S.log.names[e.vote])}</span>
+    </div>` : '';
+
+  return `
+    <article class="entry"${idAttr}>
+      <div class="entry-head">
+        <span class="entry-round">R${e.round}</span>
+        <span class="entry-name" style="color: ${color};">${esc(e.name)}</span>
+        <span class="entry-role">${esc(e.role)}</span>
+        ${e.malformed ? '<span class="entry-flag">MALFORMED</span>' : ''}
+        <span style="flex: 1;"></span>
+        <span class="entry-meta">${e.words} words · #${e.index + 1}</span>
+      </div>
+      ${planBlock}
+      <div data-statement-wrap style="display: ${said ? 'block' : 'none'};">
+        <div class="public-key">${publicLabel}</div>
+        <p class="public-text"><span data-statement>${esc(said)}</span><span class="caret" data-caret style="display: none;">▌</span></p>
+      </div>
+      ${ballot}
+    </article>`;
+}
+
+function renderFeed(f) {
+  /* Newest first, matching the design. The active entry therefore sits at the
+     top of the feed and stays in view without any autoscroll. */
+  const html = f.shown.slice().reverse().map((e, i) => entryHTML(e, f, i === 0)).join('');
+  const foot = f.finished ? `<div class="feed-foot">— END OF RUN ${esc(S.log.seed)} —</div>` : '';
+  $('feed').innerHTML = html + foot;
+  $('feed').scrollTop = 0;
+
+  $('feed').querySelectorAll('[data-reveal-plans]').forEach((el) => {
+    el.addEventListener('click', () => { S.showPlans = true; renderStructure(); });
+  });
+}
+
+function renderJurors(f) {
+  const log = S.log;
+  const fields = perceptionFields();
+
+  $('jurors').innerHTML = log.voters.map((v) => {
+    const mine = f.shown.filter((e) => e.actor === v.voter_id && e.vote);
+    const last = mine[mine.length - 1];
+
+    /* Beliefs start at the seeded perception and are overwritten by each round
+       the voter actually reported one (the final round does not ask). */
+    const belief = Object.assign({}, v.initial);
+    mine.forEach((e) => {
+      if (!e.perceptions) return;
+      Object.keys(e.perceptions).forEach((k) => {
+        if (e.perceptions[k] != null) belief[k] = e.perceptions[k];
+      });
+    });
+
+    const i = last ? slot(last.vote) : 0;
+    const bars = log.metrics.map((m, mi) =>
+      `<div style="background: ${METRIC_HUE[mi % METRIC_HUE.length]}; width: ${pct(v.weights[m])};"></div>`).join('');
+    const keys = log.metrics.map((m) =>
+      `<span>${esc(m.toUpperCase())} ${pct(v.weights[m])}</span>`).join('');
+
+    const open = S.openVoter === v.voter_id;
+    const percRows = fields.map((fd) => {
+      const b = belief[fd.key];
+      return `
+        <div class="perc-row">
+          <span class="perc-label">${esc(fd.label)}</span>
+          <span class="perc-belief">${b == null ? '—' : Number(b).toFixed(1)}</span>
+          <span class="perc-truth">${Number(fd.truth).toFixed(1)}</span>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="juror" data-voter="${esc(v.voter_id)}" style="border-color: ${last ? VOTE_BORDER[i % VOTE_BORDER.length] : 'oklch(0.88 0.01 85)'};">
+        <div class="juror-head">
+          <span class="juror-id">${esc(v.id)}</span>
+          <span class="juror-vote" style="background: ${last ? VOTE_BG[i % VOTE_BG.length] : NEUTRAL_BG}; color: ${last ? ACCENT[i % ACCENT.length] : NEUTRAL_FG};">${last ? esc(log.names[last.vote]) : 'UNPOLLED'}</span>
+        </div>
+        <div class="weight-bar">${bars}</div>
+        <div class="weight-key">${keys}</div>
+        <p class="juror-reason">${esc(last ? last.statement : 'No poll recorded yet this run.')}</p>
+        ${open ? `
+          <div class="juror-open">
+            <div class="juror-open-key">PRIVATE PERCEPTIONS vs TRUTH</div>
+            ${percRows}
+            <div class="perc-legend"><span></span><span>BELIEF</span><span>TRUTH</span></div>
+          </div>` : ''}
+      </div>`;
+  }).join('');
+
+  $('jurors').querySelectorAll('.juror').forEach((el) => {
+    el.addEventListener('click', () => {
+      S.openVoter = S.openVoter === el.dataset.voter ? null : el.dataset.voter;
+      renderStructure();
+    });
+  });
+}
+
+function renderTrends(f) {
+  const log = S.log;
+  const n = log.voters.length;
+
+  $('trendRows').innerHTML = log.rounds.map((r) => {
+    const polled = f.shown.filter((e) => e.round === r.round && e.vote);
+    const counts = log.candidates.map((c) => polled.filter((e) => e.vote === c).length);
+    const bars = counts.map((c, i) =>
+      `<div style="background: ${TREND[i % TREND.length]}; width: ${(c / n) * 100}%;"></div>`).join('');
+    return `
+      <div class="trend-row">
+        <span class="trend-label">R${r.round}</span>
+        <div class="trend-bar">${bars}</div>
+        <span class="trend-score">${polled.length ? counts.join('–') : ''}</span>
+      </div>`;
+  }).join('');
+
+  const res = log.result;
+  if (f.finished) {
+    const ordered = log.candidates.slice().sort((a, b) => res.tally[b] - res.tally[a]);
+    $('resultLine').textContent =
+      log.names[res.winner] + ' wins ' + ordered.map((c) => res.tally[c]).join('–') +
+      ' · run ' + res.duration_s + 's';
+    $('resultSub').textContent = log.diagnostics.malformed + ' malformed response' +
+      (log.diagnostics.malformed === 1 ? '' : 's');
+  } else {
+    $('resultLine').textContent = 'Final tally withheld until round ' + log.rounds.length + '.';
+    $('resultSub').textContent = '';
+  }
+}
+
+/* Everything that only changes when the cursor or a toggle moves. */
+function renderStructure() {
+  const f = frame();
+  renderFeed(f);
+  renderJurors(f);
+  renderTrends(f);
+  renderClaimLedger(f);
+
+  $('roundChips').querySelectorAll('.round-chip').forEach((b) => {
+    b.classList.toggle('on', !!f.cur && Number(b.dataset.round) === f.cur.round);
+  });
+  $('btnPlans').textContent = S.showPlans ? 'REDACT PLANS' : 'REVEAL PLANS';
+  renderText();
+}
+
+/* ---- per-tick render ---------------------------------------------------- */
+function renderText() {
+  const log = S.log;
+  const f = frame();
+  const cur = f.cur;
+
+  /* the growing entry at the top of the feed */
+  const active = $('activeEntry');
+  if (active && cur) {
+    const planEl = active.querySelector('[data-plan]');
+    const planWrap = active.querySelector('[data-plan-wrap]');
+    const planText = planSoFar(cur, f);
+    if (planEl) planEl.textContent = planText;
+    if (planWrap) planWrap.style.display = planText ? 'block' : 'none';
+
+    const said = saidSoFar(cur, f);
+    const stmtEl = active.querySelector('[data-statement]');
+    const stmtWrap = active.querySelector('[data-statement-wrap]');
+    if (stmtEl) stmtEl.textContent = said;
+    if (stmtWrap) stmtWrap.style.display = said ? 'block' : 'none';
+
+    const caret = active.querySelector('[data-caret]');
+    if (caret) caret.style.display = (S.playing && said) ? 'inline' : 'none';
+
+    const ballot = active.querySelector('[data-ballot]');
+    if (ballot) ballot.style.display = said ? 'flex' : 'none';
+  }
+
+  /* podiums: the newest statement each candidate has begun, up to the cursor */
+  ['A', 'B'].forEach((tag, i) => {
+    const key = log.candidates[i];
+    if (!key) return;
+    const mine = f.shown.filter((e) => e.actor === key);
+    if (!mine.length) { $('pod' + tag + '-text').textContent = ''; $('pod' + tag + '-meta').textContent = '—'; return; }
+    const newest = mine[mine.length - 1];
+    const said = saidSoFar(newest, f);
+    if (said) {
+      $('pod' + tag + '-text').textContent = said;
+      $('pod' + tag + '-meta').textContent = 'ROUND ' + newest.round;
+      return;
+    }
+    const prev = mine[mine.length - 2];
+    if (prev) {
+      $('pod' + tag + '-text').textContent = saidSoFar(prev, f);
+      $('pod' + tag + '-meta').textContent = 'ROUND ' + prev.round + ' · composing round ' + newest.round;
+    } else {
+      $('pod' + tag + '-text').textContent = '';
+      $('pod' + tag + '-meta').textContent = 'ROUND ' + newest.round + ' · composing (private plan)';
+    }
+  });
+
+  /* Status pill. The dot only pulses while something is actually decoding, so a
+     paused position does not read as work in progress. */
+  const dot = $('statusDot');
+  if (f.finished) {
+    $('statusText').textContent = 'RUN COMPLETE';
+    dot.style.background = 'oklch(0.6 0.11 145)';
+    dot.style.animation = 'none';
+  } else if (cur && !S.playing) {
+    $('statusText').textContent = 'PAUSED · ROUND ' + cur.round;
+    dot.style.background = 'oklch(0.6 0.02 260)';
+    dot.style.animation = 'none';
+  } else if (cur) {
+    $('statusText').textContent = cur.name.toUpperCase() +
+      (cur.kind === 'statement' ? ' GENERATING' : ' POLLING');
+    dot.style.background = cur.kind === 'statement' ? accentOf(cur.actor) : 'oklch(0.6 0.02 260)';
+    dot.style.animation = 'pulse 1.4s ease-in-out infinite';
+  } else {
+    $('statusText').textContent = 'IDLE';
+    dot.style.background = 'oklch(0.7 0.02 260)';
+    dot.style.animation = 'none';
+  }
+
+  /* counters. "words" replaces the design's token count; "event" is the
+     position of the current response in the run's flat timeline. */
+  const wordsShown = f.shown.reduce((sum, e) => {
+    if (e !== cur) return sum + e.words;
+    return sum + words(planSoFar(e, f)) + words(saidSoFar(e, f));
+  }, 0);
+  $('traceWords').textContent = wordsShown + ' words';
+  $('traceEvent').textContent = 'EVENT ' + (f.cursor + 1) + ' / ' + timeline.length;
+  $('eventCounter').textContent = (f.cursor + 1) + ' / ' + timeline.length;
+
+  const within = cur ? f.revealed / Math.max(1, cur.full.length) : 0;
+  const progress = timeline.length ? ((f.cursor + within) / timeline.length) * 100 : 0;
+  $('railFill').style.width = Math.round(progress) + '%';
+
+  $('btnPlay').textContent = S.playing ? 'PAUSE' : 'PLAY';
+  $('btnSpeed').textContent = S.speed + '×';
+}
+
+/* ---- playback ----------------------------------------------------------- */
+function tick() {
+  const now = Date.now();
+  const dt = Math.min(200, now - lastTick);
+  lastTick = now;
+  if (!S.playing || !S.log || !timeline.length) return;
+
+  const ev = timeline[S.cursor];
+  if (!ev) return;
+
+  const before = Math.floor(S.revealed);
+  const next = S.revealed + (dt / 1000) * CHARS_PER_SECOND * S.speed;
+
+  if (next >= ev.full.length) {
+    if (S.cursor + 1 < timeline.length) {
+      S.cursor += 1;
+      S.revealed = 0;
+      renderStructure();
+    } else {
+      S.revealed = ev.full.length;
+      S.playing = false;
+      renderStructure();
+    }
+    return;
+  }
+
+  S.revealed = next;
+  if (Math.floor(S.revealed) !== before) renderText();
+}
+
+/* Round chips are navigation, not playback. They land on the LAST event of the
+   round with it fully revealed, and never start decoding — PLAY is the only
+   control that does that. Playing from here resumes at the next round. */
+function goToRound(n) {
+  let last = -1;
+  for (let i = 0; i < timeline.length; i++) {
+    if (timeline[i].round === n) last = i;
+  }
+  if (last < 0) return;
+  S.cursor = last;
+  S.revealed = timeline[last].full.length;
+  S.playing = false;
+  renderStructure();
+}
+
+function loadLog(log) {
+  S.log = log;
+  S.cursor = 0;
+  S.revealed = 0;
+  S.playing = true;
+  S.openVoter = null;
+  start();
+}
+
+function start() {
+  /* The empty state hides the grid rather than replacing it, so a log opened
+     later through LOAD LOG still has its containers to render into. */
+  if (!S.log) {
+    $('emptyState').style.display = 'flex';
+    $('bodyGrid').style.display = 'none';
+    $('statusText').textContent = 'NO LOG';
+    $('statusDot').style.background = 'oklch(0.7 0.02 260)';
+    return;
+  }
+  $('emptyState').style.display = 'none';
+  $('bodyGrid').style.display = 'grid';
+  buildTimeline();
+  renderStatic();
+  renderStructure();
+}
+
+/* ---- wiring ------------------------------------------------------------- */
+$('btnPlay').addEventListener('click', () => { S.playing = !S.playing; renderText(); });
+$('btnSpeed').addEventListener('click', () => {
+  S.speed = SPEEDS[(SPEEDS.indexOf(S.speed) + 1) % SPEEDS.length];
+  renderText();
+});
+$('btnRestart').addEventListener('click', () => {
+  S.cursor = 0; S.revealed = 0; S.playing = true; renderStructure();
+});
+$('btnPlans').addEventListener('click', () => { S.showPlans = !S.showPlans; renderStructure(); });
+$('fileInput').addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try { loadLog(JSON.parse(reader.result)); }
+    catch (err) { console.warn('bad log', err); alert('That file is not a valid run log JSON.'); }
+  };
+  reader.readAsText(file);
+});
+
+start();
+setInterval(tick, 40);
+</script>
+</body>
+</html>
