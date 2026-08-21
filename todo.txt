@@ -46,13 +46,38 @@ MEASUREMENT / LYING
     MISLEAD / TELL THE TRUTH - so the intent is recorded rather than
     inferred from comparing statements against ground truth.
 
-FEATURES TO ADD
----------------
-[ ] Voter discussion board - let voters see and respond to each other
-    between rounds instead of only reacting to candidate statements.
+FUTURE - NEW INFORMATION CHANNELS
+---------------------------------
+Right now the information environment is as thin as it can be: candidates
+broadcast one statement each, voters read it alone and never hear another
+word from anyone. All three items below add a channel that a claim has to
+survive, which is the point - each one gives a lie a new way to get caught
+(or a new way to spread). Build them one at a time and keep a run with the
+channel off as the control, otherwise there is nothing to compare against.
 
-FUTURE
-------
-[ ] Newscaster LLM: an LLM that summarizes what happened each round in
-    news-report form, with the voter LLMs able to read that summary as
-    another information channel.
+[ ] Voter discussion board. Between rounds, let voters see and respond to
+    each other instead of only reacting to candidate statements. Open
+    questions: is the board public to the candidates (i.e. can a candidate
+    read the room and target the swing voter), does a voter post before or
+    after registering that round's private perceptions, and does one
+    skeptical voter spotting a false claim actually propagate to the rest.
+    That last one is the interesting measurement - peer correction as a
+    detection mechanism rather than each voter catching lies alone.
+
+[ ] Candidate debate rounds. Make some rounds a direct exchange rather than
+    two parallel broadcasts - candidates address each other, respond to what
+    the other just said, and can be challenged on a specific claim in the
+    moment. Needs: a turn-taking structure inside the round, a decision on
+    how many turns, and a decision on which rounds are debates vs. normal
+    broadcast rounds (probably not all of them - the contrast between the
+    two formats is worth keeping). This is the sharpest test of whether a
+    model will hold a false claim under direct contradiction instead of
+    quietly dropping it the next round.
+
+[ ] Newscaster LLM. An LLM that summarizes what happened each round in
+    news-report form, which voters then read as another information
+    channel. Decisions to make: does the newscaster see ground truth (an
+    accurate press) or only the statements (a press that can be misled and
+    then launder a lie onward to the voters)? Both are worth running - the
+    second is the more interesting one, since it tests whether a false claim
+    gains credibility by passing through an apparently neutral third party.

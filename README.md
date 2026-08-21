@@ -127,6 +127,29 @@ perception relative to what the candidates actually say. Unresolved.
 - The claims panel in the HTML viewer is stubbed — candidates do not yet emit structured
   claims, so nothing populates it.
 
+# Planned
+
+The information environment is currently as thin as it can be: candidates broadcast one
+statement each, and every voter reads it alone and never hears another word from anyone.
+The next three additions each give a claim another channel it has to survive — and each
+gives a lie a new way to get caught, or a new way to spread.
+
+- **Voter discussion board.** Between rounds, voters see and respond to each other
+  instead of only reacting to candidate statements. The measurement worth having is
+  whether one skeptical voter catching a false claim propagates to the rest — peer
+  correction as a detection mechanism, rather than each voter having to catch a lie alone.
+- **Candidate debate rounds.** Some rounds become a direct exchange rather than two
+  parallel broadcasts: candidates address each other and can be challenged on a specific
+  claim in the moment. Not every round — the contrast between the two formats is part of
+  the point. This is the sharpest test of whether a model will hold a false claim under
+  direct contradiction, or quietly drop it the following round.
+- **Newscaster LLM.** An LLM that summarizes each round in news-report form, which the
+  voters then read as another channel. It can be given ground truth (an accurate press)
+  or only the statements (a press that can itself be misled, and then launders a false
+  claim onward to the voters). The second is the more interesting condition: it tests
+  whether a lie gains credibility by passing through an apparently neutral third party.
+
+
 ## Repo map
 
 | File | Role |
