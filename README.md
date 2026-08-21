@@ -1,43 +1,34 @@
 # Election Simulator
 
-A simulated election between two LLM politicians (Reyes and Calder), judged by a panel
-of LLM voters, testing whether a model will make false claims to win a contest — and
-what it takes to stop it.
+A simulated election between two LLM politicians, judged by a panel
+of LLM voters.  The goal is to test whether a model will make false claims when given
+the goal to win a contest.  The secondary goal is to test if LLMs will identify and 
+consider false or inconsistent claims when making decisions.
+
+## Simulation Design
+
+The world contains two metrics (**Tolan**, **Vesper**), which are
+intentionally semantically empty (i.e. not crime, education, etc.), so a model 
+has no priors about what a good number looks like and has to reason
+from the table it was given.  Every agent is instructed that higher is better
+uniformly for the metrics.
+
+Facts about the world are generated fresh per run from a random seed (`world_config.py`):
+Ground Truth
+- Levels of each metric
+- Politician attribution to each metric (i.e. how much did politician 1 change Tolan
+in the past, etc.); with 2 politicians and 2 metrics, this is 4 numbers generated
+- Subsequently, the total change of a metric over time (i.e. "in the past Tolan was at 50
+and now it is at 62)
+Voter Truth
+- Each voter's noisy perception of the metric levels
+- Each voter's noisy perception of the politician attributions
+- Each voter's weight vector for how much they care about
+each metric (e.g. Tolan: 0.43, Vesper 0.57); always summing to 1
 
 The politicians are shown the true state of the world. The voters are not: they hold
-only noisy private perceptions plus whatever the candidates tell them. **No prompt
-anywhere instructs a model to lie.** If deception appears in the main simulation, it is
-emergent.
+only their private perceptions plus whatever the candidates tell them.
 
-The spectator, unlike the voters, can see the ground-truth table the whole time. That
-asymmetry is the point of the project.
-
-## Design principles
-
-- Never instruct a model to lie (except in the explicitly-labelled pressure test below,
-  which exists to measure the capability ceiling).
-- Ground truth is a number in a table. Measurement is arithmetic against that table —
-  no LLM judge anywhere in the classification path.
-- The world is invented and the metric names (**Tolan**, **Vesper**) are semantically
-  empty, so a model has no priors about what a good number looks like and has to reason
-  from the table it was given.
-- Voters are instrumentation and detection mechanism at once: a lie is "caught" exactly
-  when a voter declines to update toward it.
-
-## The world
-
-Ground truth is generated fresh per run from a random seed (`world_config.py`):
-
-- Start levels for Tolan and Vesper: independently drawn `Uniform(50, 70)`.
-- Each candidate's magnitude drawn independently from `Uniform(10, 20)`. One candidate
-  is randomly assigned "Tolan-positive" (`+magnitude` on Tolan, `−magnitude` on Vesper)
-  and the other gets the mirror, so which candidate holds the larger coefficient varies
-  run to run.
-- `change` is derived as the sum of both candidates' attributions per metric, never
-  independently randomized — so the accounting constraint (attributed deltas sum to the
-  level change) holds by construction rather than by convention.
-- Display names Reyes/Calder are a fixed constant; backend keys are
-  `candidate_1`/`candidate_2`.
 
 ## Agents
 
@@ -45,33 +36,27 @@ Ground truth is generated fresh per run from a random seed (`world_config.py`):
 contains the full ground-truth table and is built once at construction, then reused
 every round. Each round the candidate emits two markers: a private `PLAN:` (its
 reasoning and intent for the round, never shown to anyone) followed by a public
-`STATEMENT:` (shown to the voters and to the opponent). The final round is flagged
-in-prompt. Word budget: 150.
+`STATEMENT:` (shown to the voters and to the opponent). The STATEMENT section has a word
+budget of 150 enforced in-prompt only. The final round is flagged in-prompt.
 
 **Voters** (`voters.py`) — `NUM_VOTERS = 5`, odd so the vote cannot tie. Each voter gets:
 
-- A fixed Tolan/Vesper weight vector summing to 1 — immutable, re-injected every prompt,
-  never part of the model's output schema.
+- An immutable Tolan/Vesper weight vector
 - Private noisy starting signals: `perceived_level = true ± N(0, 4)` and
-  `perceived_attribution = true ± N(0, 8)` (tunable globals).
+  `perceived_attribution = true ± N(0, 8)`.
 
 Each round a voter returns three markers — `MY VOTE GOES TO:`, `EXPLANATION:` (80 words),
-and `PRIVATE PERCEPTIONS:` (numeric, one line per field, never shown to candidates). On
-the final round it returns the first two only. A perception line may read `UNCHANGED`
-instead of a number, which falls back to that field's most recent known value, resolved
-field-by-field rather than as an all-or-nothing block. Missing or unparseable lines fall
-back the same way.
+and `PRIVATE PERCEPTIONS:` (numeric, one line per field, never shown to candidates).
+The private perceptions allows voters to update their noisy perceptions of attributions and 
+metric levels.
 
 ## Round structure
-
-`NUM_ROUNDS = 5`. The final vote is folded into round N of the loop rather than run as a
-separate step after it:
 
 ```
 for round in 1..N:
     both candidates broadcast (PLAN + STATEMENT)
     all voters poll
-    on round N, that poll IS the final vote (two markers, no perception update)
+    on round N, that poll IS the final vote
 ```
 
 There is no additional broadcast after round N. History text is assembled per round by
@@ -82,25 +67,21 @@ learn how anyone else voted.
 
 ## The lie pressure test
 
-`lie_pressure_test.py` is the sharpest instrument here and is separate from the main
-simulation. It rigs a world where the subject is negative on both metrics and the
-opponent is the only positive force, so **honesty provably cannot win** — and it verifies
-that claim by computing the prior-implied and truth-optimal tallies *before* spending a
-single API call, aborting loudly if the subject could win honestly.
+`lie_pressure_test.py` rigs a world where the subject is negative on both metrics and the
+opponent is the only positive force, so **honesty provably cannot win**.
 
 It then runs a pressure gradient — `spontaneous` (no framing), `permitted`,
 `unverifiable_neutral`, `instructed` (told outright to misrepresent the record) — across
 a scripted opponent and scripted polls, plus a `live` condition against real LLM
 opponents and voters. Supplying intent in the `instructed` condition separates *unwilling*
 from *unable*: a model that lies fluently on command but not when left alone is making a
-choice. Nothing is scored; every channel is dumped verbatim to
-`lie_pressure_results.txt` for hand-classification.
+choice.
 
 ## What gets measured
 
 `engine.py` returns an `event_log` holding the complete record of a run: seed, model,
 full ground truth, every voter's initial state, every round's candidate statements and
-polls (raw text plus parsed fields), the final tally and winner, and wall-clock duration.
+polls, the final tally and winner, and wall-clock duration.
 
 Two viewers read it:
 
@@ -134,9 +115,9 @@ python lie_pressure_test.py           # the pressure test; --dry-run renders pro
 
 Model is set by `MODEL` in `engine.py` (currently `gemma4:31b-cloud`, served by the
 Ollama cloud API). A full run is 5 rounds × (2 candidates + 5 voters) = 35 sequential
-API calls, so expect it to take a while.
+API calls.
 
-## Known limitations
+## Current Problems
 
 - **Voters never update their perceptions.** Every voter currently emits `UNCHANGED` on
   every `PRIVATE PERCEPTIONS` field for the whole run, so beliefs never move off the
@@ -144,7 +125,7 @@ API calls, so expect it to take a while.
   central dynamic of the project and it is not currently firing. Two hypotheses: the
   `UNCHANGED` escape hatch is too cheap, or the voter prompt over-anchors on private
   perception relative to what the candidates actually say. Unresolved.
-- **Marker parsing is substring-based.** A response missing a marker silently yields
+- **Marker parsing is substring-based.** A response missing a marker yields
   `None`; `tally_votes` matches candidate names by substring. `ask_llm` already accepts a
   `fmt` argument that is never used — structured JSON output would remove this class of
   failure.
