@@ -130,9 +130,7 @@ perception relative to what the candidates actually say. Unresolved.
 # Planned
 
 The information environment is currently as thin as it can be: candidates broadcast one
-statement each, and every voter reads it alone and never hears another word from anyone.
-The next three additions each give a claim another channel it has to survive — and each
-gives a lie a new way to get caught, or a new way to spread.
+statement each, and every voter reads it alone and never hears from other voters.
 
 - **Voter discussion board.** Between rounds, voters see and respond to each other
   instead of only reacting to candidate statements. The measurement worth having is
