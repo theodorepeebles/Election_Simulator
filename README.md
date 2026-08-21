@@ -119,17 +119,11 @@ API calls.
 
 ## Current Problems
 
-- **Voters never update their perceptions.** Every voter currently emits `UNCHANGED` on
-  every `PRIVATE PERCEPTIONS` field for the whole run, so beliefs never move off the
-  initial noisy draw and the election is effectively decided before round 1. This is the
-  central dynamic of the project and it is not currently firing. Two hypotheses: the
-  `UNCHANGED` escape hatch is too cheap, or the voter prompt over-anchors on private
-  perception relative to what the candidates actually say. Unresolved.
-- **Marker parsing is substring-based.** A response missing a marker yields
-  `None`; `tally_votes` matches candidate names by substring. `ask_llm` already accepts a
-  `fmt` argument that is never used — structured JSON output would remove this class of
-  failure.
-- **No tests**, and no retry on API calls: one timeout in round 4 loses the whole run.
+- **Voters never update their perceptions.** Despite communicating changing beliefs in the
+EXPLANATION section, Every voter currently emits `UNCHANGED` on every `PRIVATE PERCEPTIONS`
+field for the whole run, so beliefs never move off the initial noisy draw. Two hypotheses:
+the `UNCHANGED` escape hatch is too cheap, or the voter prompt over-anchors on private
+perception relative to what the candidates actually say. Unresolved.
 - The claims panel in the HTML viewer is stubbed — candidates do not yet emit structured
   claims, so nothing populates it.
 
