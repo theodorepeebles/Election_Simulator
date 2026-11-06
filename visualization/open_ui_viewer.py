@@ -1,8 +1,8 @@
 """
 Builds and opens the HTML UI for a finished run.
 
-    python -m visualization.open_ui_viewer run_1984977510.txt
-    python -m visualization.open_ui_viewer 1984977510          # seed alone works too
+    python open_ui_viewer.py run_1984977510.txt
+    python open_ui_viewer.py 1984977510          # seed alone works too
 
 Reads the transcript txt_viewer.py wrote, reconstructs the event log from it,
 writes run_<seed>.json and run_<seed>.html beside it, and opens the HTML.
@@ -24,13 +24,17 @@ import re
 import sys
 import webbrowser
 
-from simulation.llm import extract_marked_fields
-from simulation.candidates import CANDIDATE_MARKERS
-from simulation.voters import VOTE_MARKERS, FINAL_VOTE_MARKERS
-from simulation.engine import tally_votes
-from visualization.ui_viewer import write_visualizer
+# The simulation code lives in ../simulation; let this file import from it.
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO_ROOT, "simulation"))
 
-OUTPUT_DIR = "output"
+from llm import extract_marked_fields
+from candidates import CANDIDATE_MARKERS
+from voters import VOTE_MARKERS, FINAL_VOTE_MARKERS
+from engine import tally_votes
+from ui_viewer import write_visualizer
+
+OUTPUT_DIR = os.path.join(REPO_ROOT, "output")
 
 SEED_RE = re.compile(r"=== SIMULATION RUN \(seed=(\d+)\) ===")
 MODEL_RE = re.compile(r"^MODEL: (.+)$", re.M)
@@ -326,7 +330,7 @@ def resolve_transcript(arg):
 def main():
     parser = argparse.ArgumentParser(
         description="Build and open the HTML UI for a finished run.",
-        epilog="example: python -m visualization.open_ui_viewer run_1984977510.txt",
+        epilog="example: python open_ui_viewer.py run_1984977510.txt",
     )
     parser.add_argument("run", nargs="?", help="transcript filename in output/, or just the seed")
     parser.add_argument("--no-open", action="store_true", help="write the files but do not open a browser")
@@ -336,9 +340,9 @@ def main():
     if not args.run:
         print("Which run? Pass a transcript filename, e.g.:\n")
         for name in runs:
-            print(f"    python -m visualization.open_ui_viewer {name}")
+            print(f"    python open_ui_viewer.py {name}")
         if not runs:
-            print(f"    (no run_*.txt found in {OUTPUT_DIR}/ — python -m simulation.run writes them)")
+            print(f"    (no run_*.txt found in {OUTPUT_DIR}/ — simulation/run.py writes them)")
         return 1
 
     path = resolve_transcript(args.run)

@@ -1,6 +1,6 @@
-from simulation.prompts import build_voter_system_prompt, build_voter_prompt
-from simulation.llm import ask_llm, extract_marked_fields
-from simulation.world_config import CANDIDATE_NAMES
+from prompts import build_voter_system_prompt, build_voter_prompt
+from llm import ask_llm, extract_marked_fields
+from world_config import CANDIDATE_NAMES
 
 VOTE_MARKERS = ["MY VOTE GOES TO:", "EXPLANATION:", "PRIVATE PERCEPTIONS:"]
 FINAL_VOTE_MARKERS = ["MY VOTE GOES TO:", "EXPLANATION:"]

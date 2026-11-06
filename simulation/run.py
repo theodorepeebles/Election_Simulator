@@ -1,6 +1,6 @@
-from simulation.engine import run_simulation
-from simulation.llm import verify_api_key
-from simulation.txt_viewer import render_event_log
+from engine import run_simulation
+from llm import verify_api_key
+from txt_viewer import render_event_log
 
 if __name__ == "__main__":
     verify_api_key()

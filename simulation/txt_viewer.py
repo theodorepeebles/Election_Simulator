@@ -2,7 +2,10 @@ import os
 import textwrap
 from itertools import zip_longest
 
-from simulation.prompts import format_ground_truth_table, _fmt
+from prompts import format_ground_truth_table, _fmt
+
+# Always the repo-root output/ folder, no matter where run.py is started from.
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output")
 
 META_KEYS = {"raw", "voter_id", "name", "candidate_key"}
 COLUMN_WIDTH = 45
@@ -101,8 +104,8 @@ def render_event_log(event_log):
     emit(f"Malformed responses: {malformed}")
     emit(f"Total time: {event_log.get('duration_seconds', 0):.1f}s")
 
-    os.makedirs("output", exist_ok=True)
-    output_path = os.path.join("output", f"run_{seed}.txt")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    output_path = os.path.join(OUTPUT_DIR, f"run_{seed}.txt")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 

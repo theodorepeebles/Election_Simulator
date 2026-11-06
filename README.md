@@ -96,8 +96,11 @@ pip install -r requirements.txt
 
 export OLLAMA_API_KEY=your-key        # PowerShell: $env:OLLAMA_API_KEY = 'your-key'
 
-python -m simulation.run                        # full run -> output/run_<seed>.txt
-python -m visualization.open_ui_viewer <seed>   # build + open the HTML viewer for that run
+cd simulation
+python run.py                    # full run -> output/run_<seed>.txt (repo-root output/)
+
+cd ../visualization
+python open_ui_viewer.py <seed>  # build + open the HTML viewer for that run
 ```
 
 Model is set by `MODEL` in `simulation/engine.py` (currently `gemma4:31b-cloud`, served by the
@@ -137,9 +140,10 @@ statement each, and every voter reads it alone and never hears from other voters
 
 ## Repo map
 
-Run everything from the repo root. `simulation/` runs elections and writes the
-text report on its own; it never imports from `visualization/`. The HTML viewer
-reads the text reports the simulation writes.
+`simulation/` runs elections and writes the text report on its own; it never
+imports from `visualization/`. The HTML viewer reads the text reports the
+simulation writes. Every run saves to the repo-root `output/` folder, whichever
+folder you start it from.
 
 | File | Role |
 | --- | --- |
@@ -148,6 +152,6 @@ reads the text reports the simulation writes.
 | `simulation/candidates.py` / `simulation/voters.py` | Agent wrappers and perception parsing |
 | `simulation/engine.py` | Round loop, history assembly, tally, event log |
 | `simulation/llm.py` | Ollama call with live streaming, marker extraction |
-| `simulation/run.py` | Entry point for a full run (`python -m simulation.run`) |
+| `simulation/run.py` | Entry point for a full run (`cd simulation`, then `python run.py`) |
 | `simulation/txt_viewer.py` | Text report, written to `output/run_<seed>.txt` after each run |
 | `visualization/ui_viewer.py`, `visualization/ui_viewer_template.html`, `visualization/open_ui_viewer.py` | HTML visualizer |

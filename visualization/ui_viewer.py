@@ -1,7 +1,12 @@
 import json
 import os
+import sys
 
-from simulation.voters import parse_private_perceptions
+# The simulation code lives in ../simulation; let this file import from it.
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO_ROOT, "simulation"))
+
+from voters import parse_private_perceptions
 
 TEMPLATE_NAME = "ui_viewer_template.html"
 LOG_PLACEHOLDER = "/*__RUN_LOG__*/null"

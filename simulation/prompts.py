@@ -1,4 +1,4 @@
-from simulation.world_config import NUM_VOTERS, CANDIDATE_NAMES
+from world_config import NUM_VOTERS, CANDIDATE_NAMES
 
 
 def _other_candidate(candidate_key):
