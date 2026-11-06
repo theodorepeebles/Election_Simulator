@@ -1,6 +1,6 @@
 import random
 
-NUM_VOTERS = 5
+NUM_VOTERS = 7
 
 # infrastructure is wired to 2 candidates for now
 NUM_CANDIDATES = 2

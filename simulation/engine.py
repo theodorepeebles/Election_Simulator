@@ -5,7 +5,9 @@ from world_config import generate_world_state, NUM_VOTERS, NUM_CANDIDATES
 from candidates import Candidate
 from voters import Voter, parse_private_perceptions
 
-MODEL = "gemma4:31b-cloud"
+MODEL = "gpt-oss:120b"
+# gpt-oss takes a thinking level: "low", "medium" or "high"
+THINK = "low"
 NUM_ROUNDS = 5
 CANDIDATE_WORD_BUDGET = 150
 VOTER_EXPLANATION_WORD_BUDGET = 80
@@ -107,14 +109,14 @@ def run_simulation():
 
     candidate_keys = [f"candidate_{i}" for i in range(1, NUM_CANDIDATES + 1)]
     candidates = {
-        key: Candidate(key, ground_truth, NUM_ROUNDS, CANDIDATE_WORD_BUDGET, MODEL)
+        key: Candidate(key, ground_truth, NUM_ROUNDS, CANDIDATE_WORD_BUDGET, MODEL, THINK)
         for key in candidate_keys
     }
-    voters = [Voter(v, NUM_ROUNDS, VOTER_EXPLANATION_WORD_BUDGET, MODEL) for v in voter_dicts]
+    voters = [Voter(v, NUM_ROUNDS, VOTER_EXPLANATION_WORD_BUDGET, MODEL, THINK) for v in voter_dicts]
     voters_by_id = {v.voter_id: v for v in voters}
     last_beliefs_by_voter = {v.voter_id: None for v in voters}
 
-    event_log = {"seed": seed, "model": MODEL, "ground_truth": ground_truth, "voter_dicts": voter_dicts, "rounds": []}
+    event_log = {"seed": seed, "model": MODEL, "think": THINK, "ground_truth": ground_truth, "voter_dicts": voter_dicts, "rounds": []}
 
     for round_number in range(1, NUM_ROUNDS + 1):
         is_final_round = round_number == NUM_ROUNDS
