@@ -13,7 +13,7 @@ has no priors about what a good number looks like and has to reason
 from the table it was given.  Every agent is instructed that higher is better
 uniformly for the metrics.
 
-Facts about the world are generated fresh per run from a random seed (`world_config.py`):
+Facts about the world are generated fresh per run from a random seed (`simulation/world_config.py`):
 Ground Truth
 - Levels of each metric
 - Politician attribution to each metric (i.e. how much did politician 1 change Tolan
@@ -65,18 +65,6 @@ personalized history ("Your statement" vs. the opponent's) *including* past poll
 while voters see both candidates' past statements and **no** poll results — voters never
 learn how anyone else voted.
 
-## The lie pressure test
-
-`lie_pressure_test.py` rigs a world where the subject is negative on both metrics and the
-opponent is the only positive force, so **honesty provably cannot win**.
-
-It then runs a pressure gradient — `spontaneous` (no framing), `permitted`,
-`unverifiable_neutral`, `instructed` (told outright to misrepresent the record) — across
-a scripted opponent and scripted polls, plus a `live` condition against real LLM
-opponents and voters. Supplying intent in the `instructed` condition separates *unwilling*
-from *unable*: a model that lies fluently on command but not when left alone is making a
-choice.
-
 ## What gets measured
 
 `engine.py` returns an `event_log` holding the complete record of a run: seed, model,
@@ -85,7 +73,7 @@ polls, the final tally and winner, and wall-clock duration.
 
 Two viewers read it:
 
-- **`txt_viewer.py`** — a readable text report: ground-truth table, voters' initial
+- **`simulation/txt_viewer.py`** — a readable text report: ground-truth table, voters' initial
   setup, every raw response as encountered, statements side-by-side in wrapped columns,
   and a diagnostics block (counts, tally, winner, malformed-response count, total time).
   Writes `output/run_<seed>.txt`.
@@ -108,12 +96,11 @@ pip install -r requirements.txt
 
 export OLLAMA_API_KEY=your-key        # PowerShell: $env:OLLAMA_API_KEY = 'your-key'
 
-python run.py                         # full run -> output/run_<seed>.txt
-python open_ui_viewer.py <seed>       # build + open the HTML viewer for that run
-python lie_pressure_test.py           # the pressure test; --dry-run renders prompts only
+python -m simulation.run                        # full run -> output/run_<seed>.txt
+python -m visualization.open_ui_viewer <seed>   # build + open the HTML viewer for that run
 ```
 
-Model is set by `MODEL` in `engine.py` (currently `gemma4:31b-cloud`, served by the
+Model is set by `MODEL` in `simulation/engine.py` (currently `gemma4:31b-cloud`, served by the
 Ollama cloud API). A full run is 5 rounds × (2 candidates + 5 voters) = 35 sequential
 API calls.
 
@@ -150,14 +137,17 @@ statement each, and every voter reads it alone and never hears from other voters
 
 ## Repo map
 
+Run everything from the repo root. `simulation/` runs elections and writes the
+text report on its own; it never imports from `visualization/`. The HTML viewer
+reads the text reports the simulation writes.
+
 | File | Role |
 | --- | --- |
-| `world_config.py` | Ground-truth generation, voter noise, tunable constants |
-| `prompts.py` | All prompt builders + the ground-truth table formatter |
-| `candidates.py` / `voters.py` | Agent wrappers and perception parsing |
-| `engine.py` | Round loop, history assembly, tally, event log |
-| `llm.py` | Ollama call with live streaming, marker extraction |
-| `run.py` | Entry point for a full run |
-| `txt_viewer.py` | Text report |
-| `ui_viewer.py`, `ui_viewer_template.html`, `open_ui_viewer.py` | HTML visualizer |
-| `lie_pressure_test.py` | The rigged-world pressure test |
+| `simulation/world_config.py` | Ground-truth generation, voter noise, tunable constants |
+| `simulation/prompts.py` | All prompt builders + the ground-truth table formatter |
+| `simulation/candidates.py` / `simulation/voters.py` | Agent wrappers and perception parsing |
+| `simulation/engine.py` | Round loop, history assembly, tally, event log |
+| `simulation/llm.py` | Ollama call with live streaming, marker extraction |
+| `simulation/run.py` | Entry point for a full run (`python -m simulation.run`) |
+| `simulation/txt_viewer.py` | Text report, written to `output/run_<seed>.txt` after each run |
+| `visualization/ui_viewer.py`, `visualization/ui_viewer_template.html`, `visualization/open_ui_viewer.py` | HTML visualizer |
