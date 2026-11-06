@@ -2,6 +2,8 @@
 # Install with: pip install -r requirements.txt
 #
 # The simulation core is pure standard library; requests is only used by
-# llm.py to stream completions from the Ollama cloud API.
+# llm.py to stream completions from the Ollama cloud API, and python-dotenv
+# loads OLLAMA_API_KEY from the .env file in the repo root.
 
 requests==2.34.2
+python-dotenv==1.2.4

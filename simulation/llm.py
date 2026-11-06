@@ -2,20 +2,24 @@ import json
 import os
 
 import requests
+from dotenv import load_dotenv
+
+# Load OLLAMA_API_KEY from the .env file in the repo root, wherever this is run from.
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"))
 
 OLLAMA_URL = "https://ollama.com/api/generate"
 
 
 def verify_api_key() -> str:
     """
-    Returns OLLAMA_API_KEY from the environment, raising if it is unset or blank.
-    Export it before running, e.g. `export OLLAMA_API_KEY=...`.
+    Returns OLLAMA_API_KEY, raising if it is unset or blank.
+    Set it in the .env file in the repo root: OLLAMA_API_KEY=your-key
     """
     key = os.environ.get("OLLAMA_API_KEY", "").strip()
     if not key:
         raise RuntimeError(
-            "OLLAMA_API_KEY is not set. Export it in your terminal before running, "
-            "e.g. `export OLLAMA_API_KEY=your-key` (PowerShell: `$env:OLLAMA_API_KEY = 'your-key'`)."
+            "OLLAMA_API_KEY is not set. Put your key in the .env file in the repo root, "
+            "on the line OLLAMA_API_KEY=your-key (no quotes, no spaces)."
         )
     return key
 
