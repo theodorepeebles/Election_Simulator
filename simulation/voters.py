@@ -7,13 +7,14 @@ FINAL_VOTE_MARKERS = ["MY VOTE GOES TO:", "EXPLANATION:"]
 
 
 class Voter:
-    def __init__(self, voter, num_rounds, explanation_word_budget, model):
+    def __init__(self, voter, num_rounds, explanation_word_budget, model, think=False):
         self.voter_id = voter["voter_id"]
         self.name = voter["name"]
         self.voter = voter
         self.num_rounds = num_rounds
         self.explanation_word_budget = explanation_word_budget
         self.model = model
+        self.think = think
         self.system_prompt = build_voter_system_prompt(voter, num_rounds, explanation_word_budget)
 
     def run_poll(
@@ -36,7 +37,7 @@ class Voter:
             last_beliefs,
             is_final_round,
         )
-        raw = ask_llm(prompt, self.system_prompt, self.model)
+        raw = ask_llm(prompt, self.system_prompt, self.model, think=self.think)
         markers = FINAL_VOTE_MARKERS if is_final_round else VOTE_MARKERS
         return extract_marked_fields(raw, markers)
 

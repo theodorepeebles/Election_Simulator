@@ -25,10 +25,11 @@ def verify_api_key() -> str:
 
 
 # Will be replaced with a wrapper for common LLM APIs.
-def ask_llm(prompt: str, system: str, model: str, fmt: str | None = None, think: bool = False) -> str:
+def ask_llm(prompt: str, system: str, model: str, fmt: str | None = None, think: bool | str = False) -> str:
     """
     POSTs prompt to Ollama's cloud API, streaming the response and printing
     each token to the console live as it arrives.
+    think: True/False, or a level ("low"/"medium"/"high") for models like gpt-oss.
     Returns:
         the stripped, full LLM response.
     """
