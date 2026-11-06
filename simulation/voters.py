@@ -37,9 +37,11 @@ class Voter:
             last_beliefs,
             is_final_round,
         )
-        raw = ask_llm(prompt, self.system_prompt, self.model, think=self.think)
+        raw, thinking = ask_llm(prompt, self.system_prompt, self.model, think=self.think)
         markers = FINAL_VOTE_MARKERS if is_final_round else VOTE_MARKERS
-        return extract_marked_fields(raw, markers)
+        fields = extract_marked_fields(raw, markers)
+        fields["thinking"] = thinking
+        return fields
 
 
 def parse_private_perceptions(text, previous=None):

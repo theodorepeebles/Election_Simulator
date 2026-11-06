@@ -1,9 +1,13 @@
+import json
+import os
 import random
 import time
 
 from world_config import generate_world_state, NUM_VOTERS, NUM_CANDIDATES
 from candidates import Candidate
 from voters import Voter, parse_private_perceptions
+from llm import set_quiet
+from txt_viewer import run_path
 
 MODEL = "gpt-oss:120b"
 # gpt-oss takes a thinking level: "low", "medium" or "high"
@@ -58,22 +62,31 @@ def build_voter_history_text(ground_truth, rounds_so_far):
     return "\n\n".join(blocks)
 
 
-def get_candidate_statements(candidates, ground_truth, round_number, rounds_so_far):
+def print_progress(progress, who, start_time):
+    """Quiet mode's one line per LLM call. progress is None when not quiet."""
+    if progress:
+        print(f"{progress}  {who}  {time.time() - start_time:.1f}s", flush=True)
+
+
+def get_candidate_statements(candidates, ground_truth, round_number, rounds_so_far, progress=None):
     statements = {}
     for key, candidate in candidates.items():
+        start_time = time.time()
         history_text = build_candidate_history_text(key, ground_truth, rounds_so_far)
         result = candidate.give_statement(round_number, history_text)
         result["candidate_key"] = key
         result["name"] = candidate.name
         statements[key] = result
+        print_progress(progress, candidate.name, start_time)
     return statements
 
 
 def get_polls(voters, ground_truth, round_number, rounds_so_far, candidate_a_statement, candidate_b_statement,
-              last_beliefs_by_voter, is_final_round):
+              last_beliefs_by_voter, is_final_round, progress=None):
     history_text = build_voter_history_text(ground_truth, rounds_so_far)
     polls = {}
     for voter in voters:
+        start_time = time.time()
         result = voter.run_poll(
             round_number=round_number,
             candidate_a_statement=candidate_a_statement,
@@ -85,6 +98,7 @@ def get_polls(voters, ground_truth, round_number, rounds_so_far, candidate_a_sta
         result["voter_id"] = voter.voter_id
         result["name"] = voter.name
         polls[voter.voter_id] = result
+        print_progress(progress, voter.name, start_time)
     return polls
 
 
@@ -101,33 +115,69 @@ def tally_votes(final_polls, candidate_names):
     return {"votes": votes, "winner": candidate_names[winner_key]}
 
 
-def run_simulation():
-    start_time = time.time()
+def save_event_log(event_log):
+    """
+    Writes the full event log to output/run_<condition>_<seed>.json. Writes a
+    .tmp file first and then swaps it in, so a run killed mid-write never
+    leaves a half-written JSON behind.
+    """
+    path = run_path(event_log["condition"], event_log["seed"], "json")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp_path = path + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(event_log, f, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, path)
+    return path
 
-    seed = random.randint(0, 2**32 - 1)
-    ground_truth, voter_dicts = generate_world_state(seed)
+
+def build_agents(event_log):
+    """Candidates and voters for a run, using the settings saved in its event log."""
+    ground_truth = event_log["ground_truth"]
+    num_rounds = event_log["num_rounds"]
+    model = event_log["model"]
+    think = event_log["think"]
 
     candidate_keys = [f"candidate_{i}" for i in range(1, NUM_CANDIDATES + 1)]
     candidates = {
-        key: Candidate(key, ground_truth, NUM_ROUNDS, CANDIDATE_WORD_BUDGET, MODEL, THINK)
+        key: Candidate(key, ground_truth, num_rounds, event_log["candidate_word_budget"], model, think)
         for key in candidate_keys
     }
-    voters = [Voter(v, NUM_ROUNDS, VOTER_EXPLANATION_WORD_BUDGET, MODEL, THINK) for v in voter_dicts]
+    voters = [
+        Voter(v, num_rounds, event_log["voter_explanation_word_budget"], model, think)
+        for v in event_log["voter_dicts"]
+    ]
+    return candidates, voters
+
+
+def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet):
+    """
+    Plays every round not yet in event_log["rounds"], saving the JSON after
+    each one. A round is only added once it's complete, so a crash mid-round
+    means that round is redone on resume.
+    """
+    set_quiet(quiet)
+    ground_truth = event_log["ground_truth"]
+    num_rounds = event_log["num_rounds"]
     voters_by_id = {v.voter_id: v for v in voters}
-    last_beliefs_by_voter = {v.voter_id: None for v in voters}
 
-    event_log = {"seed": seed, "model": MODEL, "think": THINK, "ground_truth": ground_truth, "voter_dicts": voter_dicts, "rounds": []}
+    # Counting from earlier sessions too, if this run was resumed.
+    start_time = time.time() - event_log["duration_seconds"]
 
-    for round_number in range(1, NUM_ROUNDS + 1):
-        is_final_round = round_number == NUM_ROUNDS
+    save_event_log(event_log)
 
-        statements = get_candidate_statements(candidates, ground_truth, round_number, event_log["rounds"])
+    for round_number in range(len(event_log["rounds"]) + 1, num_rounds + 1):
+        is_final_round = round_number == num_rounds
+        progress = None
+        if quiet:
+            progress = f"[{event_log['condition']} seed={event_log['seed']}] round {round_number}/{num_rounds}"
+
+        statements = get_candidate_statements(candidates, ground_truth, round_number, event_log["rounds"], progress)
         candidate_a_statement = statements["candidate_1"]["statement"]
         candidate_b_statement = statements["candidate_2"]["statement"]
 
         polls = get_polls(
             voters, ground_truth, round_number, event_log["rounds"], candidate_a_statement, candidate_b_statement,
-            last_beliefs_by_voter, is_final_round,
+            last_beliefs_by_voter, is_final_round, progress,
         )
 
         for voter_id, poll in polls.items():
@@ -144,9 +194,65 @@ def run_simulation():
             "round": round_number,
             "candidate_statements": statements,
             "polls": polls,
+            # Each voter's beliefs after this round; resume reads the last round's.
+            "beliefs": dict(last_beliefs_by_voter),
         })
+        event_log["duration_seconds"] = time.time() - start_time
+        save_event_log(event_log)
 
     event_log["result"] = tally_votes(list(event_log["rounds"][-1]["polls"].values()), ground_truth["candidate_names"])
     event_log["duration_seconds"] = time.time() - start_time
+    save_event_log(event_log)
 
     return event_log
+
+
+def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
+    """
+    Plays a full run and returns its event log. Saves
+    output/run_<condition>_<seed>.json after every round (overwriting any
+    existing file of that name). A random seed is picked if none is given.
+    """
+    if seed is None:
+        seed = random.randint(0, 2**32 - 1)
+    ground_truth, voter_dicts = generate_world_state(seed)
+
+    event_log = {
+        "seed": seed,
+        "condition": condition,
+        "model": model,
+        "think": THINK,
+        "num_rounds": NUM_ROUNDS,
+        "candidate_word_budget": CANDIDATE_WORD_BUDGET,
+        "voter_explanation_word_budget": VOTER_EXPLANATION_WORD_BUDGET,
+        "ground_truth": ground_truth,
+        "voter_dicts": voter_dicts,
+        "rounds": [],
+        "duration_seconds": 0.0,
+    }
+    candidates, voters = build_agents(event_log)
+    last_beliefs_by_voter = {v.voter_id: None for v in voters}
+
+    return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet)
+
+
+def resume_simulation(path, quiet=False):
+    """
+    Continues a run from its saved JSON at the first unfinished round, using the
+    world, voters and settings stored in it. Returns the finished event log.
+    A run that already finished is returned as is.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        event_log = json.load(f)
+
+    if "result" in event_log:
+        print(f"{path} already finished; nothing to resume.")
+        return event_log
+
+    candidates, voters = build_agents(event_log)
+    last_beliefs_by_voter = {v.voter_id: None for v in voters}
+    if event_log["rounds"]:
+        last_beliefs_by_voter.update(event_log["rounds"][-1]["beliefs"])
+
+    print(f"Resuming {path} at round {len(event_log['rounds']) + 1}/{event_log['num_rounds']}.")
+    return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet)
