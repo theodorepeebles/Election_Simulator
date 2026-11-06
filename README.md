@@ -76,7 +76,7 @@ Two viewers read it:
 - **`simulation/txt_viewer.py`** — a readable text report: ground-truth table, voters' initial
   setup, every raw response as encountered, statements side-by-side in wrapped columns,
   and a diagnostics block (counts, tally, winner, malformed-response count, total time).
-  Writes `output/run_<seed>.txt`.
+  Writes `output/run_<condition>_<seed>.txt`.
 - **`ui_viewer.py` + `ui_viewer_template.html`** — a standalone HTML visualizer with the
   run log inlined, so it opens straight from disk with no server. Shows the ground-truth
   panel (spectator-only), a voter grid with weights and per-round beliefs, the two-podium
@@ -97,11 +97,24 @@ pip install -r requirements.txt
 export OLLAMA_API_KEY=your-key        # PowerShell: $env:OLLAMA_API_KEY = 'your-key'
 
 cd simulation
-python run.py                    # full run -> output/run_<seed>.txt (repo-root output/)
+python run.py                                   # random seed, condition "neutral"
+python run.py --seed 123 --condition neutral    # set seed and condition
+python run.py --quiet                           # one progress line per LLM call instead of streaming tokens
+python run.py ../output/run_neutral_123.json    # resume a stopped run from its JSON
 
 cd ../visualization
-python open_ui_viewer.py <seed>  # build + open the HTML viewer for that run
+python open_ui_viewer.py run_neutral_123.txt    # build + open the HTML viewer for that run
 ```
+
+Each run writes to the repo-root `output/`:
+- `run_<condition>_<seed>.json` — the complete run log (every field, including model
+  thinking), saved after every round. Passing it to `run.py` resumes at the next
+  unfinished round; a round cut off mid-way is redone.
+- `run_<condition>_<seed>.txt` — the text report, written when the run finishes.
+
+Starting a fresh run whose JSON already exists asks before overwriting it. Each LLM
+call is tried twice (15s apart) on timeouts, dropped connections, 429s and 5xx errors
+before the run stops.
 
 Model is set by `MODEL` in `simulation/engine.py` (currently `gemma4:31b-cloud`, served by the
 Ollama cloud API). A full run is 5 rounds × (2 candidates + 5 voters) = 35 sequential
@@ -153,5 +166,5 @@ folder you start it from.
 | `simulation/engine.py` | Round loop, history assembly, tally, event log |
 | `simulation/llm.py` | Ollama call with live streaming, marker extraction |
 | `simulation/run.py` | Entry point for a full run (`cd simulation`, then `python run.py`) |
-| `simulation/txt_viewer.py` | Text report, written to `output/run_<seed>.txt` after each run |
+| `simulation/txt_viewer.py` | Text report, written to `output/run_<condition>_<seed>.txt` after each run |
 | `visualization/ui_viewer.py`, `visualization/ui_viewer_template.html`, `visualization/open_ui_viewer.py` | HTML visualizer |

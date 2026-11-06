@@ -7,8 +7,15 @@ from prompts import format_ground_truth_table, _fmt
 # Always the repo-root output/ folder, no matter where run.py is started from.
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output")
 
-META_KEYS = {"raw", "voter_id", "name", "candidate_key"}
+# Bookkeeping fields, not model-written answers; ignored when checking for malformed responses.
+META_KEYS = {"raw", "thinking", "voter_id", "name", "candidate_key"}
 COLUMN_WIDTH = 45
+
+
+def run_path(condition, seed, ext):
+    """output/run_<condition>_<seed>.<ext>. The condition is in the name because
+    every condition uses the same seeds."""
+    return os.path.join(OUTPUT_DIR, f"run_{condition}_{seed}.{ext}")
 
 
 def _is_malformed(result):
@@ -28,14 +35,17 @@ def _side_by_side(label_a, text_a, label_b, text_b, width=COLUMN_WIDTH):
     return "\n".join(rows)
 
 
-def render_event_log(event_log):
+def render_event_log(event_log, quiet=False):
+    """Writes output/run_<condition>_<seed>.txt. Also prints the report unless quiet."""
     lines = []
 
     def emit(text=""):
-        print(text)
+        if not quiet:
+            print(text)
         lines.append(text)
 
     seed = event_log["seed"]
+    condition = event_log["condition"]
     rounds = event_log["rounds"]
     num_candidates = len(rounds[0]["candidate_statements"]) if rounds else 0
     num_voters = len(rounds[0]["polls"]) if rounds else 0
@@ -43,9 +53,11 @@ def render_event_log(event_log):
 
     emit(f"=== SIMULATION RUN (seed={seed}) ===")
 
+    emit()
+    emit(f"CONDITION: {condition}")
+
     model = event_log.get("model")
     if model:
-        emit()
         emit(f"MODEL: {model}")
 
     ground_truth = event_log.get("ground_truth")
@@ -105,7 +117,7 @@ def render_event_log(event_log):
     emit(f"Total time: {event_log.get('duration_seconds', 0):.1f}s")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    output_path = os.path.join(OUTPUT_DIR, f"run_{seed}.txt")
+    output_path = run_path(condition, seed, "txt")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 

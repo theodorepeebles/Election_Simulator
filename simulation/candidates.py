@@ -17,5 +17,7 @@ class Candidate:
 
     def give_statement(self, round_number, history_text=""):
         prompt = build_politician_round_prompt(round_number, self.num_rounds, history_text)
-        raw = ask_llm(prompt, self.system_prompt, self.model, think=self.think)
-        return extract_marked_fields(raw, CANDIDATE_MARKERS)
+        raw, thinking = ask_llm(prompt, self.system_prompt, self.model, think=self.think)
+        fields = extract_marked_fields(raw, CANDIDATE_MARKERS)
+        fields["thinking"] = thinking
+        return fields
