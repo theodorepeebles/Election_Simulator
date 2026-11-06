@@ -1,13 +1,13 @@
 """
 Builds and opens the HTML UI for a finished run.
 
-    python open_ui_viewer.py run_1984977510.txt
-    python open_ui_viewer.py 1984977510          # seed alone works too
+    python -m visualization.open_ui_viewer run_1984977510.txt
+    python -m visualization.open_ui_viewer 1984977510          # seed alone works too
 
 Reads the transcript txt_viewer.py wrote, reconstructs the event log from it,
 writes run_<seed>.json and run_<seed>.html beside it, and opens the HTML.
 
-This is the only entry point that opens the UI viewer. run.py writes the
+This is the only entry point that opens the UI viewer. simulation/run.py writes the
 transcript and stops; nothing else builds or launches the interface.
 
 Everything is read out of the transcript rather than regenerated from the seed,
@@ -24,11 +24,11 @@ import re
 import sys
 import webbrowser
 
-from llm import extract_marked_fields
-from candidates import CANDIDATE_MARKERS
-from voters import VOTE_MARKERS, FINAL_VOTE_MARKERS
-from engine import tally_votes
-from ui_viewer import write_visualizer
+from simulation.llm import extract_marked_fields
+from simulation.candidates import CANDIDATE_MARKERS
+from simulation.voters import VOTE_MARKERS, FINAL_VOTE_MARKERS
+from simulation.engine import tally_votes
+from visualization.ui_viewer import write_visualizer
 
 OUTPUT_DIR = "output"
 
@@ -326,7 +326,7 @@ def resolve_transcript(arg):
 def main():
     parser = argparse.ArgumentParser(
         description="Build and open the HTML UI for a finished run.",
-        epilog="example: python open_ui_viewer.py run_1984977510.txt",
+        epilog="example: python -m visualization.open_ui_viewer run_1984977510.txt",
     )
     parser.add_argument("run", nargs="?", help="transcript filename in output/, or just the seed")
     parser.add_argument("--no-open", action="store_true", help="write the files but do not open a browser")
@@ -336,9 +336,9 @@ def main():
     if not args.run:
         print("Which run? Pass a transcript filename, e.g.:\n")
         for name in runs:
-            print(f"    python open_ui_viewer.py {name}")
+            print(f"    python -m visualization.open_ui_viewer {name}")
         if not runs:
-            print(f"    (no run_*.txt found in {OUTPUT_DIR}/ — run.py writes them)")
+            print(f"    (no run_*.txt found in {OUTPUT_DIR}/ — python -m simulation.run writes them)")
         return 1
 
     path = resolve_transcript(args.run)

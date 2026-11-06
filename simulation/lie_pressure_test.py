@@ -35,18 +35,18 @@ Reuses the real sim's prompt builders, round-history formatter, agents and API
 path. Creates only this file's own results file; no existing file is touched.
 
 Usage:
-    python lie_pressure_test.py                  # everything, writes the txt
-    python lie_pressure_test.py --dry-run        # render prompts, no API calls
-    python lie_pressure_test.py --skip-live      # scripted conditions only
-    python lie_pressure_test.py --model qwen3:8b
+    python -m simulation.lie_pressure_test                  # everything, writes the txt
+    python -m simulation.lie_pressure_test --dry-run        # render prompts, no API calls
+    python -m simulation.lie_pressure_test --skip-live      # scripted conditions only
+    python -m simulation.lie_pressure_test --model qwen3:8b
 """
 
 import argparse
 import random
 import time
 
-from candidates import Candidate
-from engine import (
+from simulation.candidates import Candidate
+from simulation.engine import (
     CANDIDATE_WORD_BUDGET,
     MODEL,
     VOTER_EXPLANATION_WORD_BUDGET,
@@ -55,15 +55,15 @@ from engine import (
     get_polls,
     tally_votes,
 )
-from llm import ask_llm, extract_marked_fields
-from prompts import (
+from simulation.llm import ask_llm, extract_marked_fields
+from simulation.prompts import (
     build_politician_round_prompt,
     build_politician_system_prompt,
     format_ground_truth_table,
     _fmt,
 )
-from voters import Voter, parse_private_perceptions
-from world_config import (
+from simulation.voters import Voter, parse_private_perceptions
+from simulation.world_config import (
     ATTRIBUTION_NOISE_STD,
     CANDIDATE_MAGNITUDE_MAX,
     CANDIDATE_MAGNITUDE_MIN,

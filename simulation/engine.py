@@ -1,9 +1,9 @@
 import random
 import time
 
-from world_config import generate_world_state, NUM_VOTERS, NUM_CANDIDATES
-from candidates import Candidate
-from voters import Voter, parse_private_perceptions
+from simulation.world_config import generate_world_state, NUM_VOTERS, NUM_CANDIDATES
+from simulation.candidates import Candidate
+from simulation.voters import Voter, parse_private_perceptions
 
 MODEL = "gemma4:31b-cloud"
 NUM_ROUNDS = 5

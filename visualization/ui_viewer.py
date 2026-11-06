@@ -1,7 +1,7 @@
 import json
 import os
 
-from voters import parse_private_perceptions
+from simulation.voters import parse_private_perceptions
 
 TEMPLATE_NAME = "ui_viewer_template.html"
 LOG_PLACEHOLDER = "/*__RUN_LOG__*/null"

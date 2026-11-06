@@ -2,7 +2,7 @@ import os
 import textwrap
 from itertools import zip_longest
 
-from prompts import format_ground_truth_table, _fmt
+from simulation.prompts import format_ground_truth_table, _fmt
 
 META_KEYS = {"raw", "voter_id", "name", "candidate_key"}
 COLUMN_WIDTH = 45

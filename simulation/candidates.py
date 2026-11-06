@@ -1,5 +1,5 @@
-from prompts import build_politician_system_prompt, build_politician_round_prompt
-from llm import ask_llm, extract_marked_fields
+from simulation.prompts import build_politician_system_prompt, build_politician_round_prompt
+from simulation.llm import ask_llm, extract_marked_fields
 
 CANDIDATE_MARKERS = ["PLAN:", "STATEMENT:"]
 
