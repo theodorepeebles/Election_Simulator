@@ -109,8 +109,9 @@ python open_ui_viewer.py run_neutral_123.txt    # build + open the HTML viewer f
 Each run writes to `output/<model>/` (e.g. `output/gpt-oss-120b/`), so runs of different
 models never overwrite each other:
 - `run_<condition>_<seed>.json` — the complete run log (every field, including model
-  thinking and the condition's config values), saved after every round. Passing it to
-  `run.py` resumes at the next unfinished round; a round cut off mid-way is redone.
+  thinking and the condition's config values), saved after every candidate and voter
+  response. Passing it to `run.py` resumes where it stopped: responses already saved for an
+  unfinished round (kept under `partial_round`) are reused, and only the missing ones are asked.
 - `run_<condition>_<seed>.txt` — the text report, written when the run finishes.
 
 Starting a fresh run whose JSON already exists asks before overwriting it. Each LLM
