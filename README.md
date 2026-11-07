@@ -143,6 +143,7 @@ python score.py ../output/gpt-oss-120b/run_both_101.json
 python score.py --rescore ...        # redo runs that already have a finished score file
 python score.py --quiet              # one line per judge call instead of streaming tokens
 python test_checks.py                # offline tests of the Python checks
+python annotate.py ../output/gpt-oss-120b/scores/nemotron-3-ultra/score_neutral_101.json   # hand-label claims to check the judge
 ```
 
 An LLM judge (`JUDGE_MODEL` in `scoring/judge.py`, currently `nemotron-3-ultra`) labels
@@ -203,4 +204,5 @@ folder you start it from.
 | `scoring/judge.py` | LLM judge prompt, call and reply parser |
 | `scoring/checks.py` | Python number check, quote check, per-candidate rates |
 | `scoring/score.py` | Entry point for scoring runs (`cd scoring`, then `python score.py`) |
+| `scoring/annotate.py` | Blind hand-labeling: shows one claim at a time (in an md file) with the context the judge saw, then reports agreement with the judge |
 | `visualization/ui_viewer.py`, `visualization/ui_viewer_template.html`, `visualization/open_ui_viewer.py` | HTML visualizer |
