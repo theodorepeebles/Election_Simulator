@@ -43,6 +43,11 @@ class _RetryableError(Exception):
     """A failure worth trying again: timeouts, dropped connections, 429, 5xx."""
 
 
+class FatalLLMError(RuntimeError):
+    """A failure no later call will get past either (bad key, no access to the
+    model), so a batch should stop instead of failing every remaining run."""
+
+
 def _stream_once(body: dict, model: str) -> tuple[str, str]:
     """One POST to Ollama. Returns (response, thinking). Raises _RetryableError
     for transient failures and RuntimeError for ones a retry can't fix."""
@@ -51,10 +56,10 @@ def _stream_once(body: dict, model: str) -> tuple[str, str]:
         response = requests.post(OLLAMA_URL, json=body, headers=headers, timeout=REQUEST_TIMEOUT_SECONDS, stream=True)
 
         if response.status_code == 401:
-            raise RuntimeError("Ollama rejected OLLAMA_API_KEY (401). Check the key at https://ollama.com/settings/keys.")
+            raise FatalLLMError("Ollama rejected OLLAMA_API_KEY (401). Check the key at https://ollama.com/settings/keys.")
         if response.status_code == 403:
             # The key authenticated; something else is forbidden (often model access).
-            raise RuntimeError(f"Ollama accepted the key but forbade this request for model '{model}' (403): {response.text.strip()}")
+            raise FatalLLMError(f"Ollama accepted the key but forbade this request for model '{model}' (403): {response.text.strip()}")
         if response.status_code == 429 or response.status_code >= 500:
             raise _RetryableError(f"HTTP {response.status_code}: {response.text.strip()[:200]}")
         response.raise_for_status()
