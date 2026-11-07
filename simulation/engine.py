@@ -68,24 +68,32 @@ def print_progress(progress, who, start_time):
         print(f"{progress}  {who}  {time.time() - start_time:.1f}s", flush=True)
 
 
-def get_candidate_statements(candidates, ground_truth, round_number, rounds_so_far, progress=None):
-    statements = {}
+def get_candidate_statements(candidates, ground_truth, round_number, rounds_so_far, statements, save,
+                             progress=None):
+    """Fills `statements` with each candidate's response, skipping any already in it
+    (from a resumed run), and calls save() after each new one."""
     for key, candidate in candidates.items():
+        if key in statements:
+            continue
         start_time = time.time()
         history_text = build_candidate_history_text(key, ground_truth, rounds_so_far)
         result = candidate.give_statement(round_number, history_text)
         result["candidate_key"] = key
         result["name"] = candidate.name
         statements[key] = result
+        save()
         print_progress(progress, candidate.name, start_time)
     return statements
 
 
 def get_polls(voters, ground_truth, round_number, rounds_so_far, candidate_a_statement, candidate_b_statement,
-              last_beliefs_by_voter, is_final_round, progress=None):
+              last_beliefs_by_voter, is_final_round, polls, save, progress=None):
+    """Fills `polls` with each voter's response, skipping any already in it (from a
+    resumed run), and calls save() after each new one."""
     history_text = build_voter_history_text(ground_truth, rounds_so_far)
-    polls = {}
     for voter in voters:
+        if voter.voter_id in polls:
+            continue
         start_time = time.time()
         result = voter.run_poll(
             round_number=round_number,
@@ -98,6 +106,7 @@ def get_polls(voters, ground_truth, round_number, rounds_so_far, candidate_a_sta
         result["voter_id"] = voter.voter_id
         result["name"] = voter.name
         polls[voter.voter_id] = result
+        save()
         print_progress(progress, voter.name, start_time)
     return polls
 
@@ -150,8 +159,9 @@ def build_agents(event_log):
 def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json_path):
     """
     Plays every round not yet in event_log["rounds"], saving the JSON to
-    json_path after each one. A round is only added once it's complete, so a crash mid-round
-    means that round is redone on resume.
+    json_path after every LLM response. Responses for the round in progress are
+    kept in event_log["partial_round"]; on resume, those are reused and only the
+    missing ones are asked. A round moves into event_log["rounds"] once it's complete.
     """
     set_quiet(quiet)
     ground_truth = event_log["ground_truth"]
@@ -161,7 +171,11 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json
     # Counting from earlier sessions too, if this run was resumed.
     start_time = time.time() - event_log["duration_seconds"]
 
-    save_event_log(event_log, json_path)
+    def save():
+        event_log["duration_seconds"] = time.time() - start_time
+        save_event_log(event_log, json_path)
+
+    save()
 
     for round_number in range(len(event_log["rounds"]) + 1, num_rounds + 1):
         is_final_round = round_number == num_rounds
@@ -169,13 +183,21 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json
         if quiet:
             progress = f"[{event_log['condition']} seed={event_log['seed']}] round {round_number}/{num_rounds}"
 
-        statements = get_candidate_statements(candidates, ground_truth, round_number, event_log["rounds"], progress)
+        partial = event_log.get("partial_round")
+        if not partial or partial["round"] != round_number:
+            partial = {"round": round_number, "candidate_statements": {}, "polls": {}}
+            event_log["partial_round"] = partial
+
+        statements = get_candidate_statements(
+            candidates, ground_truth, round_number, event_log["rounds"],
+            partial["candidate_statements"], save, progress,
+        )
         candidate_a_statement = statements["candidate_1"]["statement"]
         candidate_b_statement = statements["candidate_2"]["statement"]
 
         polls = get_polls(
             voters, ground_truth, round_number, event_log["rounds"], candidate_a_statement, candidate_b_statement,
-            last_beliefs_by_voter, is_final_round, progress,
+            last_beliefs_by_voter, is_final_round, partial["polls"], save, progress,
         )
 
         for voter_id, poll in polls.items():
@@ -195,12 +217,11 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json
             # Each voter's beliefs after this round; resume reads the last round's.
             "beliefs": dict(last_beliefs_by_voter),
         })
-        event_log["duration_seconds"] = time.time() - start_time
-        save_event_log(event_log, json_path)
+        del event_log["partial_round"]
+        save()
 
     event_log["result"] = tally_votes(list(event_log["rounds"][-1]["polls"].values()), ground_truth["candidate_names"])
-    event_log["duration_seconds"] = time.time() - start_time
-    save_event_log(event_log, json_path)
+    save()
 
     return event_log
 
@@ -208,7 +229,7 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json
 def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
     """
     Plays a full run and returns its event log. Saves
-    output/<model>/run_<condition>_<seed>.json after every round (overwriting
+    output/<model>/run_<condition>_<seed>.json after every LLM response (overwriting
     any existing file of that name). A random seed is picked if none is given.
     """
     if seed is None:
