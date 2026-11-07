@@ -3,7 +3,7 @@ import os
 import random
 import time
 
-from world_config import generate_world_state, NUM_VOTERS, NUM_CANDIDATES
+from world_config import generate_world_state, CONDITIONS, NUM_VOTERS, NUM_CANDIDATES
 from candidates import Candidate
 from voters import Voter, parse_private_perceptions
 from llm import set_quiet
@@ -115,13 +115,11 @@ def tally_votes(final_polls, candidate_names):
     return {"votes": votes, "winner": candidate_names[winner_key]}
 
 
-def save_event_log(event_log):
+def save_event_log(event_log, path):
     """
-    Writes the full event log to output/run_<condition>_<seed>.json. Writes a
-    .tmp file first and then swaps it in, so a run killed mid-write never
-    leaves a half-written JSON behind.
+    Writes the full event log to path. Writes a .tmp file first and then swaps
+    it in, so a run killed mid-write never leaves a half-written JSON behind.
     """
-    path = run_path(event_log["condition"], event_log["seed"], "json")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp_path = path + ".tmp"
     with open(tmp_path, "w", encoding="utf-8") as f:
@@ -149,10 +147,10 @@ def build_agents(event_log):
     return candidates, voters
 
 
-def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet):
+def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json_path):
     """
-    Plays every round not yet in event_log["rounds"], saving the JSON after
-    each one. A round is only added once it's complete, so a crash mid-round
+    Plays every round not yet in event_log["rounds"], saving the JSON to
+    json_path after each one. A round is only added once it's complete, so a crash mid-round
     means that round is redone on resume.
     """
     set_quiet(quiet)
@@ -163,7 +161,7 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet):
     # Counting from earlier sessions too, if this run was resumed.
     start_time = time.time() - event_log["duration_seconds"]
 
-    save_event_log(event_log)
+    save_event_log(event_log, json_path)
 
     for round_number in range(len(event_log["rounds"]) + 1, num_rounds + 1):
         is_final_round = round_number == num_rounds
@@ -198,11 +196,11 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet):
             "beliefs": dict(last_beliefs_by_voter),
         })
         event_log["duration_seconds"] = time.time() - start_time
-        save_event_log(event_log)
+        save_event_log(event_log, json_path)
 
     event_log["result"] = tally_votes(list(event_log["rounds"][-1]["polls"].values()), ground_truth["candidate_names"])
     event_log["duration_seconds"] = time.time() - start_time
-    save_event_log(event_log)
+    save_event_log(event_log, json_path)
 
     return event_log
 
@@ -210,16 +208,18 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet):
 def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
     """
     Plays a full run and returns its event log. Saves
-    output/run_<condition>_<seed>.json after every round (overwriting any
-    existing file of that name). A random seed is picked if none is given.
+    output/<model>/run_<condition>_<seed>.json after every round (overwriting
+    any existing file of that name). A random seed is picked if none is given.
     """
     if seed is None:
         seed = random.randint(0, 2**32 - 1)
-    ground_truth, voter_dicts = generate_world_state(seed)
+    config = CONDITIONS[condition]
+    ground_truth, voter_dicts = generate_world_state(seed, config)
 
     event_log = {
         "seed": seed,
         "condition": condition,
+        "condition_config": config,
         "model": model,
         "think": THINK,
         "num_rounds": NUM_ROUNDS,
@@ -233,14 +233,15 @@ def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
     candidates, voters = build_agents(event_log)
     last_beliefs_by_voter = {v.voter_id: None for v in voters}
 
-    return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet)
+    json_path = run_path(condition, seed, "json", model)
+    return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json_path)
 
 
 def resume_simulation(path, quiet=False):
     """
     Continues a run from its saved JSON at the first unfinished round, using the
-    world, voters and settings stored in it. Returns the finished event log.
-    A run that already finished is returned as is.
+    world, voters and settings stored in it, and keeps saving to that same path.
+    Returns the finished event log. A run that already finished is returned as is.
     """
     with open(path, "r", encoding="utf-8") as f:
         event_log = json.load(f)
@@ -255,4 +256,4 @@ def resume_simulation(path, quiet=False):
         last_beliefs_by_voter.update(event_log["rounds"][-1]["beliefs"])
 
     print(f"Resuming {path} at round {len(event_log['rounds']) + 1}/{event_log['num_rounds']}.")
-    return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet)
+    return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, path)

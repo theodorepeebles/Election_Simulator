@@ -12,10 +12,17 @@ META_KEYS = {"raw", "thinking", "voter_id", "name", "candidate_key"}
 COLUMN_WIDTH = 45
 
 
-def run_path(condition, seed, ext):
-    """output/run_<condition>_<seed>.<ext>. The condition is in the name because
-    every condition uses the same seeds."""
-    return os.path.join(OUTPUT_DIR, f"run_{condition}_{seed}.{ext}")
+def model_slug(model):
+    """A model name that's safe as a folder name: gpt-oss:120b -> gpt-oss-120b."""
+    for ch in ":/\\":
+        model = model.replace(ch, "-")
+    return model
+
+
+def run_path(condition, seed, ext, model):
+    """output/<model>/run_<condition>_<seed>.<ext>. The condition is in the name because
+    every condition uses the same seeds, and the model folder keeps models apart."""
+    return os.path.join(OUTPUT_DIR, model_slug(model), f"run_{condition}_{seed}.{ext}")
 
 
 def _is_malformed(result):
@@ -35,8 +42,9 @@ def _side_by_side(label_a, text_a, label_b, text_b, width=COLUMN_WIDTH):
     return "\n".join(rows)
 
 
-def render_event_log(event_log, quiet=False):
-    """Writes output/run_<condition>_<seed>.txt. Also prints the report unless quiet."""
+def render_event_log(event_log, quiet=False, json_path=None):
+    """Writes the .txt report next to the run's JSON (json_path, or the usual
+    run_path if not given). Also prints the report unless quiet."""
     lines = []
 
     def emit(text=""):
@@ -116,8 +124,11 @@ def render_event_log(event_log, quiet=False):
     emit(f"Malformed responses: {malformed}")
     emit(f"Total time: {event_log.get('duration_seconds', 0):.1f}s")
 
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    output_path = run_path(condition, seed, "txt")
+    if json_path:
+        output_path = os.path.splitext(json_path)[0] + ".txt"
+    else:
+        output_path = run_path(condition, seed, "txt", event_log["model"])
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
