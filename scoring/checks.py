@@ -53,8 +53,15 @@ def _normalize(text):
     return "".join(text.replace("**", "").split())
 
 
+_QUOTE_MARKS = '"“”'
+
+
 def quote_found(quote, reasoning):
-    if not quote or quote.strip().lower() == "none":
+    if not quote:
+        return False
+    # The judge sometimes wraps its evidence in quotation marks.
+    quote = quote.strip().strip(_QUOTE_MARKS).strip()
+    if not quote or quote.lower() == "none":
         return False
     return _normalize(quote) in _normalize(reasoning)
 

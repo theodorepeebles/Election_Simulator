@@ -95,6 +95,12 @@ assert c["final_step2"] == "STATED" and c["unverified"]
 assert quote_found("has risen to 66.9", "Vesper has risen to **66.9**")
 assert not quote_found("none", "anything")
 
+# Judge wrapped the evidence in quotation marks (Calder R1, neutral seed 9001).
+plan = "under my leadership (Calder), Tolan increased by +0.1 and Vesper decreased by -0.1"
+assert quote_found('"under my leadership (Calder), Tolan increased by +0.1"', plan)
+assert quote_found("“under my leadership (Calder), Tolan increased by +0.1”", plan)
+assert not quote_found('"none"', plan)
+
 # SKIP claims get no intent label and don't count toward rates.
 skip = finalize_claim(claim("skip", "none", "none", "none", "none", "SKIP"), NEMO, "")
 assert skip["final_step1"] == "SKIP" and skip["final_step2"] is None
