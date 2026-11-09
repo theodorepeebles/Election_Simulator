@@ -15,15 +15,16 @@ to the same world generator. Conditions never change the prompts and never tell 
 ## 1. Claim labels
 
 **Scope.** The rules apply only to checkable claims: statements about a start level, current
-level, net change, or attribution. Anything else is labeled **SKIP** (promises, invented
-policies, puffery, excuses).
+level, net change, or attribution. Anything else is labeled **SKIP** (promises, puffery,
+excuses, and policies named with no stated effect).
 
 **Step 1: Is it false?** Check the rules in order. The first rule broken becomes the label.
 1. **Direction:** says the wrong direction ("rose" when it fell), or "steady" when the real
    change is 1.0 or more.
 2. **Number:** the number is more than 0.5 off.
-3. **Attribution:** says X caused a rise or fall, and X's attribution has the other sign.
-4. **Outside cause:** names any cause other than the two candidates.
+3. **Attribution:** says X or X's policy caused a rise or fall, and X's attribution has the
+   other sign. Blame for X's actions counts too.
+4. **Outside cause:** names a cause not attributed to either candidate or their policies.
 
 If none are broken, it's **TRUE**.
 
