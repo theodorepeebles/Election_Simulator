@@ -7,8 +7,8 @@ Runs every condition x seed, unattended.
 
 Finished runs are skipped, half-finished ones are resumed, and a failed run is
 logged to output/<model>/batch_failures.log before moving on. The batch only
-stops early on a bad API key or no access to the model, since every other run
-would fail the same way. Re-running the same command picks up where it left off.
+stops early on a bad API key, no access to the model, or an account out of
+credit or over its monthly limit, since every other run would fail the same way. Re-running the same command picks up where it left off.
 """
 import argparse
 import datetime

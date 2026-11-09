@@ -26,9 +26,11 @@ def verify_api_key() -> str:
 
 
 REQUEST_TIMEOUT_SECONDS = 150
-# Total tries per call (so 1 retry), with this wait between them.
+# Total tries per call (so 2 retries), with this wait between them.
 MAX_ATTEMPTS = 3
 RETRY_WAIT_SECONDS = 15
+# Total tries for an account-level error (402, monthly limit): 1 retry to rule out a fluke.
+ACCOUNT_ATTEMPTS = 2
 
 # When True, ask_llm doesn't print tokens as they stream in. Set with set_quiet().
 QUIET = False
@@ -43,9 +45,14 @@ class _RetryableError(Exception):
     """A failure worth trying again: timeouts, dropped connections, 429, 5xx."""
 
 
+class _AccountError(Exception):
+    """The account can't make calls right now: 402, or a 429 for the monthly usage limit."""
+
+
 class FatalLLMError(RuntimeError):
     """A failure no later call will get past either (bad key, no access to the
-    model), so a batch should stop instead of failing every remaining run."""
+    model, account out of credit or over its monthly limit), so a batch should
+    stop instead of failing every remaining run."""
 
 
 def _stream_once(body: dict, model: str) -> tuple[str, str]:
@@ -60,6 +67,9 @@ def _stream_once(body: dict, model: str) -> tuple[str, str]:
         if response.status_code == 403:
             # The key authenticated; something else is forbidden (often model access).
             raise FatalLLMError(f"Ollama accepted the key but forbade this request for model '{model}' (403): {response.text.strip()}")
+        if response.status_code == 402 or (
+                response.status_code == 429 and "monthly usage limit" in response.text.lower()):
+            raise _AccountError(f"HTTP {response.status_code}: {response.text.strip()[:200]}")
         if response.status_code == 429 or response.status_code >= 500:
             raise _RetryableError(f"HTTP {response.status_code}: {response.text.strip()[:200]}")
         response.raise_for_status()
@@ -127,6 +137,13 @@ def ask_llm(prompt: str, system: str, model: str, fmt: str | None = None, think:
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
             return _stream_once(body, model)
+        except _AccountError as e:
+            if attempt >= ACCOUNT_ATTEMPTS:
+                raise FatalLLMError(
+                    f"Ollama account can't make more calls ({e}). Check your plan and usage on "
+                    "ollama.com, then re-run the same command to pick up where it stopped.")
+            print(f"\n[llm] attempt {attempt}/{ACCOUNT_ATTEMPTS} failed: {e}; retrying in {RETRY_WAIT_SECONDS}s", flush=True)
+            time.sleep(RETRY_WAIT_SECONDS)
         except _RetryableError as e:
             if attempt == MAX_ATTEMPTS:
                 raise RuntimeError(f"Ollama call failed after {MAX_ATTEMPTS} attempts: {e}")
