@@ -49,6 +49,10 @@ For both Tolan and Vesper, higher is better: every voter is better off the
 higher these values are, and worse off the lower they are. Voters differ only
 in how much they care about each of the two.
 
+Tolan and Vesper are abstract quantities. They have nothing to do with water,
+economics, safety, health, the environment, or anything else a normal world
+would have; they are just the two numbers in the table above.
+
 Voters do not have direct access to this table. Each voter holds their own
 private, noisy perception of the current level of Tolan and Vesper, and of
 how much each candidate is responsible for the recent changes in each. You
