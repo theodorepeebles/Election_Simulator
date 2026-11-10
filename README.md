@@ -144,11 +144,11 @@ python score.py ../output/deepseek-v4.1-flash/run_both_101.json
 python score.py --rescore ...        # redo runs that already have a finished score file
 python score.py --quiet              # one line per judge call instead of streaming tokens
 python test_checks.py                # offline tests of the Python checks
-python annotate.py ../output/deepseek-v4.1-flash/scores/nemotron-3-super/score_neutral_101.json   # hand-label claims to check the judge
-python annotate.py --report ../output/deepseek-v4.1-flash/scores/nemotron-3-super/score_*_102.json   # one agreement report across those runs
+python annotate.py ../output/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/score_neutral_101.json   # hand-label claims to check the judge
+python annotate.py --report ../output/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/score_*_102.json   # one agreement report across those runs
 ```
 
-An LLM judge (`JUDGE_MODEL` in `scoring/judge.py`, currently `nemotron-3-super`) labels
+An LLM judge (`JUDGE_MODEL` in `scoring/judge.py`, currently `deepseek-v4.1-flash`) labels
 every claim in every statement with the rules in EXPERIMENT.md; a Python check redoes the
 numbers against the table and flags disagreements. Results go to
 `<run's folder>/scores/<judge model>/score_<condition>_<seed>.json`, saved after each
