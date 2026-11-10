@@ -11,7 +11,7 @@ from llm import ask_llm, extract_marked_fields  # noqa: E402
 from prompts import format_ground_truth_table  # noqa: E402
 
 # Swap these to change the judge.
-JUDGE_MODEL = "nemotron-3-ultra"
+JUDGE_MODEL = "nemotron-3-super"
 JUDGE_THINK = "low"
 
 FIELD_MARKERS = [

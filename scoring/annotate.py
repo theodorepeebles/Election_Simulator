@@ -11,7 +11,7 @@ terminal. The terminal shows only the claim's ID and quote and asks for your lab
 you stop or finish (and when you come back), it reports how often you agreed with the judge. Answers are saved after each one to annotation_<condition>_<seed>.json;
 re-running skips claims you've already labeled. Score and run files are only read.
 
-    python annotate.py --report ../output/gpt-oss-120b/scores/nemotron-3-ultra/score_*_102.json
+    python annotate.py --report ../output/gpt-oss-120b/scores/nemotron-3-super/score_*_102.json
 
 Combines your labels across several runs into one report,
 annotations/agreement_combined.md. Both reports show, for STATED and UNSTATED, how often
