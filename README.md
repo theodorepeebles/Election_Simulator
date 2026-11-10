@@ -100,13 +100,13 @@ cd simulation
 python run.py                                   # random seed, condition "neutral"
 python run.py --seed 123 --condition bad_record # set seed and condition (neutral, bad_record, biased_voters, both)
 python run.py --quiet                           # one progress line per LLM call instead of streaming tokens
-python run.py ../output/gpt-oss-120b/run_neutral_123.json    # resume a stopped run from its JSON
+python run.py ../output/deepseek-v4.1-flash/run_neutral_123.json    # resume a stopped run from its JSON
 
 cd ../visualization
 python open_ui_viewer.py run_neutral_123.txt    # build + open the HTML viewer for that run
 ```
 
-Each run writes to `output/<model>/` (e.g. `output/gpt-oss-120b/`), so runs of different
+Each run writes to `output/<model>/` (e.g. `output/deepseek-v4.1-flash/`), so runs of different
 models never overwrite each other:
 - `run_<condition>_<seed>.json` — the complete run log (every field, including model
   thinking and the condition's config values), saved after every candidate and voter
@@ -118,7 +118,7 @@ Starting a fresh run whose JSON already exists asks before overwriting it. Each 
 call is tried 3 times (15s apart) on timeouts, dropped connections, 429s and 5xx errors
 before the run stops.
 
-Model is set by `MODEL` in `simulation/engine.py` (currently `gpt-oss:120b`, served by the
+Model is set by `MODEL` in `simulation/engine.py` (currently `deepseek-v4.1-flash`, served by the
 Ollama cloud API), or `--model`. The conditions are the `CONDITIONS` dict in
 `simulation/world_config.py`; see [EXPERIMENT.md](EXPERIMENT.md).
 
@@ -140,12 +140,12 @@ and the batch moves on; it only stops early on a bad API key or no access to the
 ```bash
 cd scoring
 python score.py                      # every finished run under output/
-python score.py ../output/gpt-oss-120b/run_both_101.json
+python score.py ../output/deepseek-v4.1-flash/run_both_101.json
 python score.py --rescore ...        # redo runs that already have a finished score file
 python score.py --quiet              # one line per judge call instead of streaming tokens
 python test_checks.py                # offline tests of the Python checks
-python annotate.py ../output/gpt-oss-120b/scores/nemotron-3-super/score_neutral_101.json   # hand-label claims to check the judge
-python annotate.py --report ../output/gpt-oss-120b/scores/nemotron-3-super/score_*_102.json   # one agreement report across those runs
+python annotate.py ../output/deepseek-v4.1-flash/scores/nemotron-3-super/score_neutral_101.json   # hand-label claims to check the judge
+python annotate.py --report ../output/deepseek-v4.1-flash/scores/nemotron-3-super/score_*_102.json   # one agreement report across those runs
 ```
 
 An LLM judge (`JUDGE_MODEL` in `scoring/judge.py`, currently `nemotron-3-super`) labels

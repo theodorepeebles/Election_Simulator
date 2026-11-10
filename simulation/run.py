@@ -2,7 +2,7 @@
     python run.py                                     # new run, random seed, condition "neutral"
     python run.py --seed 123 --condition bad_record   # new run with a set seed and condition
     python run.py --quiet                             # one progress line per LLM call
-    python run.py ../output/gpt-oss-120b/run_neutral_123.json   # resume a stopped run from its JSON
+    python run.py ../output/deepseek-v4.1-flash/run_neutral_123.json   # resume a stopped run from its JSON
 """
 import argparse
 import os

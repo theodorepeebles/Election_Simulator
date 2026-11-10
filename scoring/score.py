@@ -2,7 +2,7 @@
 Scores finished runs with the LLM judge plus the Python checks.
 
     python score.py                                            # every finished run under output/
-    python score.py ../output/gpt-oss-120b/run_both_101.json   # just these runs
+    python score.py ../output/deepseek-v4.1-flash/run_both_101.json   # just these runs
     python score.py --rescore ...                              # redo even finished score files
     python score.py --quiet                                    # one line per judge call, no token streaming
 

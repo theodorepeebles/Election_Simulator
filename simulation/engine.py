@@ -9,8 +9,8 @@ from voters import Voter, parse_private_perceptions
 from llm import set_quiet
 from txt_viewer import run_path
 
-MODEL = "gpt-oss:120b"
-# gpt-oss takes a thinking level: "low", "medium" or "high"
+MODEL = "deepseek-v4.1-flash"
+# A thinking level: "low", "medium" or "high" (or True/False)
 THINK = "low"
 NUM_ROUNDS = 5
 CANDIDATE_WORD_BUDGET = 150
