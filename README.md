@@ -145,6 +145,7 @@ python score.py --rescore ...        # redo runs that already have a finished sc
 python score.py --quiet              # one line per judge call instead of streaming tokens
 python test_checks.py                # offline tests of the Python checks
 python annotate.py ../output/gpt-oss-120b/scores/nemotron-3-ultra/score_neutral_101.json   # hand-label claims to check the judge
+python annotate.py --report ../output/gpt-oss-120b/scores/nemotron-3-ultra/score_*_102.json   # one agreement report across those runs
 ```
 
 An LLM judge (`JUDGE_MODEL` in `scoring/judge.py`, currently `nemotron-3-ultra`) labels
