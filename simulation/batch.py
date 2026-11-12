@@ -5,6 +5,7 @@ Runs every condition x seed, unattended.
     python batch.py --seeds 101-105                    # pilot
     python batch.py --conditions neutral both --seeds 101 103 --model nemotron-3-ultra
     python batch.py --seeds 103 --model gpt-oss:120b --think medium
+    python batch.py --seeds 103 --model gpt-oss:120b --candidate-think high --voter-think medium
 
 Finished runs are skipped, half-finished ones are resumed, and a failed run is
 logged to output/<model>/batch_failures.log before moving on. The batch only
@@ -46,9 +47,9 @@ def log_failure(log_path, condition, seed, error):
         f.write("\n")
 
 
-def run_one(condition, seed, model, think=THINK):
+def run_one(condition, seed, model, candidate_think=THINK, voter_think=THINK):
     """Skips, resumes or starts one run. Returns "skipped", "resumed" or "ran".
-    A resumed run keeps the thinking level it started with."""
+    A resumed run keeps the thinking levels it started with."""
     json_path = run_path(condition, seed, "json", model)
 
     if os.path.exists(json_path):
@@ -61,7 +62,8 @@ def run_one(condition, seed, model, think=THINK):
         event_log = resume_simulation(json_path, quiet=True)
         outcome = "resumed"
     else:
-        event_log = run_simulation(seed=seed, condition=condition, model=model, quiet=True, think=think)
+        event_log = run_simulation(seed=seed, condition=condition, model=model, quiet=True,
+                                   candidate_think=candidate_think, voter_think=voter_think)
         outcome = "ran"
 
     render_event_log(event_log, quiet=True, json_path=json_path)
@@ -77,7 +79,11 @@ if __name__ == "__main__":
     parser.add_argument("--seeds", nargs="+", default=["101-125"], help="numbers and/or ranges like 101-125")
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--think", default=THINK, help='thinking level for new runs: "low", "medium" or "high"')
+    parser.add_argument("--candidate-think", help="candidates' thinking level (default: --think)")
+    parser.add_argument("--voter-think", help="voters' thinking level (default: --think)")
     args = parser.parse_args()
+    candidate_think = args.candidate_think or args.think
+    voter_think = args.voter_think or args.think
 
     verify_api_key()
     seeds = parse_seeds(args.seeds)
@@ -90,7 +96,7 @@ if __name__ == "__main__":
     for i, (condition, seed) in enumerate(jobs, start=1):
         print(f"[{i}/{len(jobs)}] {condition} seed={seed}", flush=True)
         try:
-            outcome = run_one(condition, seed, args.model, args.think)
+            outcome = run_one(condition, seed, args.model, candidate_think, voter_think)
         except FatalLLMError as e:
             log_failure(log_path, condition, seed, e)
             print(f"Stopping the batch: {e}")
