@@ -155,6 +155,27 @@ numbers against the table and flags disagreements. Results go to
 statement. A judge call that fails is recorded there as an error and retried on the next
 `python score.py`.
 
+### Judge validation
+
+The judge is frozen: `deepseek-v4.1-flash`, think "low". It beat nemotron-3-super on
+bad_record seed 100 (1 borderline false call vs. 9 wrong ones) and nemotron-3-ultra was too
+slow. It was tuned on seeds 100–101, then checked blind against my hand labels on seed 102
+(neutral and bad_record, 295 claims), which it had never seen:
+
+| Measure | Result |
+| --- | --- |
+| True / false / skip agreement | 272/295 (92%) |
+| Exact Step 1 agreement | 272/295 (92%) |
+| Disagreements that are only TRUE vs. SKIP (no effect on lie counts) | 22 of 23 |
+| Claims the judge called false that I didn't | 1 of 295 |
+| STATED claims, by either of us | 0 |
+
+So the judge rarely invents lies. Whether it catches them isn't measured yet: the candidates
+told no lies in these runs, which used the candidate prompt from before the "winning is the
+only thing that matters" goal line. The judge is also the candidates' own model, so it is
+grading itself. Full report:
+`output/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/annotations/agreement_combined.md`.
+
 ## Current Problems
 
 - **Voters never update their perceptions.** Despite communicating changing beliefs in the
