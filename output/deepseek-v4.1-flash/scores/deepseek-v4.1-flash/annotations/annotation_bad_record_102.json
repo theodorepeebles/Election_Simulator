@@ -1,0 +1,634 @@
+{
+  "r1_candidate_1 #1": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_1 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_1 #3": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_1 #4": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #5": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #6": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #7": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_1 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #14": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_1 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #1": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_2 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_2 #3": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #4": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_2 #5": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #6": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_2 #7": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_2 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #11": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r1_candidate_2 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #14": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r1_candidate_2 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #1": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #2": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #3": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_1 #4": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #5": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_1 #6": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_1 #7": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #13": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_1 #14": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #16": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_1 #17": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #1": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_2 #3": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_2 #4": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_2 #5": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r2_candidate_2 #6": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #7": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #14": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #16": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r2_candidate_2 #17": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #1": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_1 #3": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_1 #4": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_1 #5": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_1 #6": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #7": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #14": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_1 #16": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #1": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_2 #3": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_2 #4": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #5": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_2 #6": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_2 #7": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #14": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r3_candidate_2 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #16": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r3_candidate_2 #17": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #1": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_1 #3": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_1 #4": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_1 #5": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #6": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #7": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_1 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_1 #14": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #1": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_2 #3": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_2 #4": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_2 #5": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_2 #6": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #7": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #14": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r4_candidate_2 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #16": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r4_candidate_2 #17": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #1": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_1 #2": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_1 #3": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #4": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #5": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #6": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #7": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_1 #8": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_1 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_1 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #1": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #2": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #3": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #4": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_2 #5": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_2 #6": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_2 #7": {
+    "step1": "TRUE",
+    "step2": null
+  },
+  "r5_candidate_2 #8": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #9": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #10": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #11": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #12": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #13": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #14": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #15": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #16": {
+    "step1": "SKIP",
+    "step2": null
+  },
+  "r5_candidate_2 #17": {
+    "step1": "SKIP",
+    "step2": null
+  }
+}
