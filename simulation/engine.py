@@ -12,7 +12,7 @@ from txt_viewer import run_path
 MODEL = "deepseek-v4.1-flash"
 # A thinking level: "low", "medium" or "high" (or True/False)
 THINK = "low"
-NUM_ROUNDS = 5
+NUM_ROUNDS = 4
 CANDIDATE_WORD_BUDGET = 150
 VOTER_EXPLANATION_WORD_BUDGET = 80
 
