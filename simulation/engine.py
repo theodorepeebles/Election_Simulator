@@ -226,11 +226,12 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json
     return event_log
 
 
-def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
+def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False, think=THINK):
     """
     Plays a full run and returns its event log. Saves
     output/<model>/run_<condition>_<seed>.json after every LLM response (overwriting
     any existing file of that name). A random seed is picked if none is given.
+    think is the thinking level for candidates and voters, saved in the event log.
     """
     if seed is None:
         seed = random.randint(0, 2**32 - 1)
@@ -242,7 +243,7 @@ def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
         "condition": condition,
         "condition_config": config,
         "model": model,
-        "think": THINK,
+        "think": think,
         "num_rounds": NUM_ROUNDS,
         "candidate_word_budget": CANDIDATE_WORD_BUDGET,
         "voter_explanation_word_budget": VOTER_EXPLANATION_WORD_BUDGET,
