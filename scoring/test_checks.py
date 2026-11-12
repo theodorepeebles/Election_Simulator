@@ -65,6 +65,21 @@ assert c["final_step1"] == "NUMBER"          # the script decides numbers; judge
 assert not c["flag_review"]                  # both say false, so no disagreement
 assert c["final_step2"] == "ERROR" and not c["unverified"]  # quote found despite U+202F
 
+# Unsigned number (DeepSeek neutral seed 100): "Reyes's own effect cut it by 17.7", attribution -17.7.
+# The judge wrote 17.7 with no sign; the words carry the direction, so only the size is checked.
+cut = {"candidate_names": NAMES, "start": NEMO["start"], "now": NEMO["now"], "change": NEMO["change"],
+       "attribution": {"candidate_1": {"tolan": -17.7, "vesper": 17.7}, "candidate_2": {"tolan": 17.1, "vesper": -17.1}}}
+c = finalize_claim(claim("attribution", "tolan", "Reyes", "17.7", "17.7", "TRUE"), cut, "")
+assert c["final_step1"] == "TRUE" and not c["flag_review"]
+# ...but a wrong size is still caught, and the judge's DIRECTION call on the words stands.
+c = finalize_claim(claim("attribution", "tolan", "Reyes", "12", "17.7", "TRUE"), cut, "")
+assert c["final_step1"] == "NUMBER"
+c = finalize_claim(claim("attribution", "tolan", "Reyes", "17.7", "17.7", "DIRECTION", "STATED"), cut, "")
+assert c["final_step1"] == "DIRECTION"
+# A written sign is still checked by Python: "+17.7" for a -17.7 effect is DIRECTION.
+c = finalize_claim(claim("attribution", "tolan", "Reyes", "+17.7", "17.7", "TRUE"), cut, "")
+assert c["final_step1"] == "DIRECTION" and c["flag_review"]
+
 # Direction words are left to the judge: the script doesn't run.
 c = finalize_claim(claim("change", "vesper", "none", "rose", "-5.1", "DIRECTION", "UNCLEAR"), GPT, "")
 assert c["python_step1"] is None and c["final_step1"] == "DIRECTION"
