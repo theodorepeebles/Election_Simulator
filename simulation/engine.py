@@ -232,7 +232,7 @@ def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False,
                    candidate_think=THINK, voter_think=THINK):
     """
     Plays a full run and returns its event log. Saves
-    output/<model>/run_<condition>_<seed>_c-<think>_v-<think>.json after every LLM response (overwriting
+    output/<model>/think-<think>/run_<condition>_<seed>_c-<think>_v-<think>.json after every LLM response (overwriting
     any existing file of that name). A random seed is picked if none is given.
     candidate_think and voter_think are the thinking levels, saved in the event log.
     """

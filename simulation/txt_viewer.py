@@ -20,14 +20,18 @@ def model_slug(model):
 
 
 def run_path(condition, seed, ext, model, candidate_think=None, voter_think=None):
-    """output/<model>/run_<condition>_<seed>_c-<candidate think>_v-<voter think>.<ext>,
-    e.g. run_neutral_103_c-high_v-medium.json. The condition and thinking levels are in the
-    name because every condition and level uses the same seeds; the model folder keeps
-    models apart. Without thinking levels (older runs): run_<condition>_<seed>.<ext>."""
+    """output/<model>/think-<candidate think>/run_<condition>_<seed>_c-<candidate think>_v-<voter think>.<ext>,
+    e.g. gpt-oss-120b/think-high/run_neutral_103_c-high_v-medium.json. The condition and
+    thinking levels are in the name because every condition and level uses the same seeds;
+    the folders keep models and candidate thinking levels apart, just for browsing.
+    Without thinking levels (older runs): output/<model>/run_<condition>_<seed>.<ext>."""
+    folder = os.path.join(OUTPUT_DIR, model_slug(model))
     name = f"run_{condition}_{seed}"
     if candidate_think is not None:
-        name += f"_c-{str(candidate_think).lower()}_v-{str(voter_think).lower()}"
-    return os.path.join(OUTPUT_DIR, model_slug(model), f"{name}.{ext}")
+        level = str(candidate_think).lower()
+        folder = os.path.join(folder, f"think-{level}")
+        name += f"_c-{level}_v-{str(voter_think).lower()}"
+    return os.path.join(folder, f"{name}.{ext}")
 
 
 def _is_malformed(result):
