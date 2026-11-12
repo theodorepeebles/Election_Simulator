@@ -232,7 +232,7 @@ def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False,
                    candidate_think=THINK, voter_think=THINK):
     """
     Plays a full run and returns its event log. Saves
-    output/<model>/run_<condition>_<seed>.json after every LLM response (overwriting
+    output/<model>/run_<condition>_<seed>_c-<think>_v-<think>.json after every LLM response (overwriting
     any existing file of that name). A random seed is picked if none is given.
     candidate_think and voter_think are the thinking levels, saved in the event log.
     """
@@ -259,7 +259,7 @@ def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False,
     candidates, voters = build_agents(event_log)
     last_beliefs_by_voter = {v.voter_id: None for v in voters}
 
-    json_path = run_path(condition, seed, "json", model)
+    json_path = run_path(condition, seed, "json", model, candidate_think, voter_think)
     return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json_path)
 
 

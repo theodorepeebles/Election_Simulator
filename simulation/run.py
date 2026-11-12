@@ -8,7 +8,7 @@ import argparse
 import os
 import sys
 
-from engine import run_simulation, resume_simulation, MODEL
+from engine import run_simulation, resume_simulation, MODEL, THINK
 from llm import verify_api_key
 from txt_viewer import render_event_log, run_path
 from world_config import CONDITIONS
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     else:
         json_path = None
         if args.seed is not None:
-            json_path = run_path(args.condition, args.seed, "json", args.model)
+            json_path = run_path(args.condition, args.seed, "json", args.model, THINK, THINK)
             if os.path.exists(json_path):
                 print(f"{json_path} already exists. To resume it instead, run: python run.py \"{json_path}\"")
                 try:

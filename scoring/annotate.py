@@ -4,11 +4,11 @@ Human labels for checking the LLM judge.
     python annotate.py ../output/gpt-oss-120b/scores/nemotron-3-ultra/score_neutral_9001.json
 
 Goes through the claims one at a time. For each, it rewrites
-annotations/annotation_<condition>_<seed>.md (next to the score file) with only what's
+annotations/annotation_<run name>.md (next to the score file) with only what's
 relevant to that claim: the claim, then exactly what the judge saw for its statement. The
 judge's labels are hidden, so your labels are independent. Keep its preview open beside the
 terminal. The terminal shows only the claim's ID and quote and asks for your labels. When
-you stop or finish (and when you come back), it reports how often you agreed with the judge. Answers are saved after each one to annotation_<condition>_<seed>.json;
+you stop or finish (and when you come back), it reports how often you agreed with the judge. Answers are saved after each one to annotation_<run name>.json;
 re-running skips claims you've already labeled. Score and run files are only read.
 
     python annotate.py --report ../output/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/score_*_102.json
@@ -164,8 +164,14 @@ def annotations_folder(score_file):
     return os.path.join(os.path.dirname(os.path.abspath(score_file)), "annotations")
 
 
+def run_name(score_file):
+    """score_neutral_103_c-high_v-medium.json -> neutral_103_c-high_v-medium."""
+    name = os.path.splitext(os.path.basename(score_file))[0]
+    return name[len("score_"):] if name.startswith("score_") else name
+
+
 def answers_path_for(score_file, score):
-    return os.path.join(annotations_folder(score_file), f"annotation_{score['condition']}_{score['seed']}.json")
+    return os.path.join(annotations_folder(score_file), f"annotation_{run_name(score_file)}.json")
 
 
 def score_claims(score):
@@ -187,7 +193,7 @@ def report_combined(score_files):
         if not os.path.exists(answers_path):
             print(f"(no labels yet for {score_file}; left out)")
             continue
-        run = f"{score['condition']}_{score['seed']}"
+        run = run_name(score_file)
         runs.append(run)
         judges.add(score["judge_model"])
         # Prefix with the run, since statement IDs repeat across runs.
@@ -216,10 +222,10 @@ if __name__ == "__main__":
 
     folder = annotations_folder(score_file)
     os.makedirs(folder, exist_ok=True)
-    claim_md_path = os.path.join(folder, f"annotation_{score['condition']}_{score['seed']}.md")
+    claim_md_path = os.path.join(folder, f"annotation_{run_name(score_file)}.md")
     answers_path = answers_path_for(score_file, score)
-    agreement_path = os.path.join(folder, f"agreement_{score['condition']}_{score['seed']}.md")
-    title = f"{score['condition']} seed {score['seed']}"
+    agreement_path = os.path.join(folder, f"agreement_{run_name(score_file)}.md")
+    title = run_name(score_file)
 
     print(f"Open this next to the terminal (it changes with each claim): {claim_md_path}")
 

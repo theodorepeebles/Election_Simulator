@@ -50,7 +50,7 @@ def log_failure(log_path, condition, seed, error):
 def run_one(condition, seed, model, candidate_think=THINK, voter_think=THINK):
     """Skips, resumes or starts one run. Returns "skipped", "resumed" or "ran".
     A resumed run keeps the thinking levels it started with."""
-    json_path = run_path(condition, seed, "json", model)
+    json_path = run_path(condition, seed, "json", model, candidate_think, voter_think)
 
     if os.path.exists(json_path):
         with open(json_path, "r", encoding="utf-8") as f:
