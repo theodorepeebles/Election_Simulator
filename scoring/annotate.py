@@ -170,6 +170,13 @@ def run_name(score_file):
     return name[len("score_"):] if name.startswith("score_") else name
 
 
+def run_file_for(score_file, score):
+    """The run file sits two folders above its score file (<run dir>/scores/<judge>/), so
+    this still finds it after the run folder is moved."""
+    run_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(score_file))))
+    return os.path.join(run_dir, os.path.basename(score["run_path"]))
+
+
 def answers_path_for(score_file, score):
     return os.path.join(annotations_folder(score_file), f"annotation_{run_name(score_file)}.json")
 
@@ -218,7 +225,7 @@ if __name__ == "__main__":
     score_file = sys.argv[1]
 
     score = load_json(score_file)
-    event_log = load_json(score["run_path"])
+    event_log = load_json(run_file_for(score_file, score))
 
     folder = annotations_folder(score_file)
     os.makedirs(folder, exist_ok=True)
