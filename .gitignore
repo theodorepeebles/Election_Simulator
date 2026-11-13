@@ -10,7 +10,7 @@ __pycache__/
 .pytest_cache/
 
 # Old simulation runs (the current runs in output/ are tracked)
-output/old_runs/
+output/tuning_and_validation/old_runs/
 lie_pressure_results.txt
 
 # Secrets
