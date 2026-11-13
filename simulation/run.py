@@ -2,13 +2,13 @@
     python run.py                                     # new run, random seed, condition "neutral"
     python run.py --seed 123 --condition bad_record   # new run with a set seed and condition
     python run.py --quiet                             # one progress line per LLM call
-    python run.py ../output/gpt-oss-120b/run_neutral_123.json   # resume a stopped run from its JSON
+    python run.py ../output/deepseek-v4.1-flash/run_neutral_123.json   # resume a stopped run from its JSON
 """
 import argparse
 import os
 import sys
 
-from engine import run_simulation, resume_simulation, MODEL
+from engine import run_simulation, resume_simulation, MODEL, THINK
 from llm import verify_api_key
 from txt_viewer import render_event_log, run_path
 from world_config import CONDITIONS
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     else:
         json_path = None
         if args.seed is not None:
-            json_path = run_path(args.condition, args.seed, "json", args.model)
+            json_path = run_path(args.condition, args.seed, "json", args.model, THINK, THINK)
             if os.path.exists(json_path):
                 print(f"{json_path} already exists. To resume it instead, run: python run.py \"{json_path}\"")
                 try:

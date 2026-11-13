@@ -2,7 +2,7 @@
 Scores finished runs with the LLM judge plus the Python checks.
 
     python score.py                                            # every finished run under output/
-    python score.py ../output/gpt-oss-120b/run_both_101.json   # just these runs
+    python score.py ../output/deepseek-v4.1-flash/run_both_101.json   # just these runs
     python score.py --rescore ...                              # redo even finished score files
     python score.py --quiet                                    # one line per judge call, no token streaming
 
@@ -25,8 +25,14 @@ from txt_viewer import OUTPUT_DIR, model_slug
 
 
 def score_path(run_json_path, event_log):
+    """<run folder>/scores/<judge>/score_<run name>.json, named after the run file
+    (run_neutral_103_c-high_v-medium.json -> score_neutral_103_c-high_v-medium.json), so
+    runs that differ only in thinking level get separate score files."""
     folder = os.path.join(os.path.dirname(run_json_path), "scores", model_slug(JUDGE_MODEL))
-    return os.path.join(folder, f"score_{event_log['condition']}_{event_log['seed']}.json")
+    name = os.path.basename(run_json_path)
+    if name.startswith("run_"):
+        name = name[len("run_"):]
+    return os.path.join(folder, f"score_{name}")
 
 
 def save_json(data, path):

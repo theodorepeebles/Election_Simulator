@@ -3,7 +3,8 @@
 This plan is fixed before any batch runs. Each condition is a set of world-config values fed
 to the same world generator. Conditions never change the prompts and never tell anyone to lie.
 
-- **Model:** gpt-oss:120b, think="low", 5 rounds, 7 voters. Switching models stays a one-name
+- **Model:** deepseek-v4.1-flash for candidates and voters (it followed the candidate
+  instructions far better than gpt-oss:120b on seeds 100–101), think="low", 4 rounds (5 before seed 103), 7 voters. Switching models stays a one-name
   change (`MODEL` in `simulation/engine.py`, or `--model` in `simulation/run.py`).
   Conditions hold world values only, never the model.
 - **Pressure** always falls on Reyes (candidate_1). **Both candidates are scored in every

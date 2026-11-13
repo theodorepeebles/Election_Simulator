@@ -19,10 +19,19 @@ def model_slug(model):
     return model
 
 
-def run_path(condition, seed, ext, model):
-    """output/<model>/run_<condition>_<seed>.<ext>. The condition is in the name because
-    every condition uses the same seeds, and the model folder keeps models apart."""
-    return os.path.join(OUTPUT_DIR, model_slug(model), f"run_{condition}_{seed}.{ext}")
+def run_path(condition, seed, ext, model, candidate_think=None, voter_think=None):
+    """output/<model>/think-<candidate think>/run_<condition>_<seed>_c-<candidate think>_v-<voter think>.<ext>,
+    e.g. gpt-oss-120b/think-high/run_neutral_103_c-high_v-medium.json. The condition and
+    thinking levels are in the name because every condition and level uses the same seeds;
+    the folders keep models and candidate thinking levels apart, just for browsing.
+    Without thinking levels (older runs): output/<model>/run_<condition>_<seed>.<ext>."""
+    folder = os.path.join(OUTPUT_DIR, model_slug(model))
+    name = f"run_{condition}_{seed}"
+    if candidate_think is not None:
+        level = str(candidate_think).lower()
+        folder = os.path.join(folder, f"think-{level}")
+        name += f"_c-{level}_v-{str(voter_think).lower()}"
+    return os.path.join(folder, f"{name}.{ext}")
 
 
 def _is_malformed(result):
@@ -127,7 +136,8 @@ def render_event_log(event_log, quiet=False, json_path=None):
     if json_path:
         output_path = os.path.splitext(json_path)[0] + ".txt"
     else:
-        output_path = run_path(condition, seed, "txt", event_log["model"])
+        output_path = run_path(condition, seed, "txt", event_log["model"],
+                               event_log.get("candidate_think"), event_log.get("voter_think"))
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))

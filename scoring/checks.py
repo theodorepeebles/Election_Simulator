@@ -39,8 +39,12 @@ def lookup_true(ground_truth, kind, metric, candidate_key):
     return None
 
 
-def number_check(kind, claimed, true):
-    """Step 1 rules 1-2 for a claim that states a number: DIRECTION, NUMBER or TRUE."""
+def number_check(kind, claimed, true, signed=True):
+    """Step 1 rules 1-2 for a claim that states a number: DIRECTION, NUMBER or TRUE.
+    signed=False: the number was written without a sign ("cut it by 17.7" -> 17.7), so its
+    direction is in the words, which the judge checks; only the size is compared."""
+    if not signed:
+        claimed, true = abs(claimed), abs(true)
     if kind in ("change", "attribution") and claimed * true < 0:
         return "DIRECTION"
     if abs(claimed - true) > NUMBER_TOLERANCE:
@@ -88,7 +92,13 @@ def finalize_claim(claim, ground_truth, reasoning):
     final_step1 = claim["step1"]
     claimed = parse_number(claim.get("claimed_value"))
     if true is not None and claimed is not None:
-        python_step1 = number_check(claim["kind"], claimed, true)
+        # Only changes and attributions have a sign; levels (start, current) never do.
+        signed = (claim["kind"] not in ("change", "attribution")
+                  or (claim.get("claimed_value") or "").strip().startswith(("+", "-", "−")))
+        python_step1 = number_check(claim["kind"], claimed, true, signed)
+        # Unsigned: Python can't see the direction, so the judge's DIRECTION call stands.
+        if not signed and claim["step1"] == "DIRECTION":
+            python_step1 = "DIRECTION"
         out["python_step1"] = python_step1
         if (python_step1 in FALSE_LABELS) != (claim["step1"] in FALSE_LABELS):
             out["flag_review"] = True

@@ -9,8 +9,8 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
-# Simulation output (event logs, rendered txt/html/json runs)
-output/
+# Old simulation runs (the current runs in output/ are tracked)
+output/old_runs/
 lie_pressure_results.txt
 
 # Secrets

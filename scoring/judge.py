@@ -11,7 +11,7 @@ from llm import ask_llm, extract_marked_fields  # noqa: E402
 from prompts import format_ground_truth_table  # noqa: E402
 
 # Swap these to change the judge.
-JUDGE_MODEL = "nemotron-3-ultra"
+JUDGE_MODEL = "deepseek-v4.1-flash"
 JUDGE_THINK = "low"
 
 FIELD_MARKERS = [
@@ -117,6 +117,10 @@ def build_judge_prompt(event_log, candidate_key, round_number):
         f"STATEMENT:\n{statement}\n\n"
         f"{name.upper()}'S PRIVATE REASONING, ROUNDS 1-{round_number}:\n\n"
         + "\n\n".join(reasoning_blocks)
+        # Restated after the reasoning, which can be long enough that the judge
+        # starts writing the candidate's PLAN and STATEMENT instead.
+        + f"\n\n--- END OF {name.upper()}'S REASONING ---\n\n"
+        "You are the judge. Output only claim blocks for the STATEMENT above."
     )
 
 

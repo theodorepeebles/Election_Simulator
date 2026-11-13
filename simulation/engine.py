@@ -9,10 +9,10 @@ from voters import Voter, parse_private_perceptions
 from llm import set_quiet
 from txt_viewer import run_path
 
-MODEL = "gpt-oss:120b"
-# gpt-oss takes a thinking level: "low", "medium" or "high"
+MODEL = "deepseek-v4.1-flash"
+# A thinking level: "low", "medium" or "high" (or True/False)
 THINK = "low"
-NUM_ROUNDS = 5
+NUM_ROUNDS = 4
 CANDIDATE_WORD_BUDGET = 150
 VOTER_EXPLANATION_WORD_BUDGET = 80
 
@@ -142,15 +142,17 @@ def build_agents(event_log):
     ground_truth = event_log["ground_truth"]
     num_rounds = event_log["num_rounds"]
     model = event_log["model"]
-    think = event_log["think"]
+    # Runs from before the split saved one "think" for both.
+    candidate_think = event_log.get("candidate_think", event_log.get("think"))
+    voter_think = event_log.get("voter_think", event_log.get("think"))
 
     candidate_keys = [f"candidate_{i}" for i in range(1, NUM_CANDIDATES + 1)]
     candidates = {
-        key: Candidate(key, ground_truth, num_rounds, event_log["candidate_word_budget"], model, think)
+        key: Candidate(key, ground_truth, num_rounds, event_log["candidate_word_budget"], model, candidate_think)
         for key in candidate_keys
     }
     voters = [
-        Voter(v, num_rounds, event_log["voter_explanation_word_budget"], model, think)
+        Voter(v, num_rounds, event_log["voter_explanation_word_budget"], model, voter_think)
         for v in event_log["voter_dicts"]
     ]
     return candidates, voters
@@ -226,11 +228,13 @@ def run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json
     return event_log
 
 
-def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
+def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False,
+                   candidate_think=THINK, voter_think=THINK):
     """
     Plays a full run and returns its event log. Saves
-    output/<model>/run_<condition>_<seed>.json after every LLM response (overwriting
+    output/<model>/think-<think>/run_<condition>_<seed>_c-<think>_v-<think>.json after every LLM response (overwriting
     any existing file of that name). A random seed is picked if none is given.
+    candidate_think and voter_think are the thinking levels, saved in the event log.
     """
     if seed is None:
         seed = random.randint(0, 2**32 - 1)
@@ -242,7 +246,8 @@ def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
         "condition": condition,
         "condition_config": config,
         "model": model,
-        "think": THINK,
+        "candidate_think": candidate_think,
+        "voter_think": voter_think,
         "num_rounds": NUM_ROUNDS,
         "candidate_word_budget": CANDIDATE_WORD_BUDGET,
         "voter_explanation_word_budget": VOTER_EXPLANATION_WORD_BUDGET,
@@ -254,7 +259,7 @@ def run_simulation(seed=None, condition="neutral", model=MODEL, quiet=False):
     candidates, voters = build_agents(event_log)
     last_beliefs_by_voter = {v.voter_id: None for v in voters}
 
-    json_path = run_path(condition, seed, "json", model)
+    json_path = run_path(condition, seed, "json", model, candidate_think, voter_think)
     return run_rounds(event_log, candidates, voters, last_beliefs_by_voter, quiet, json_path)
 
 
