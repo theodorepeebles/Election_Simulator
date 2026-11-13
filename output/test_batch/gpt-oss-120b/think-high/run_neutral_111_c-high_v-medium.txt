@@ -1,0 +1,476 @@
+=== SIMULATION RUN (seed=111) ===
+
+CONDITION: neutral
+MODEL: gpt-oss:120b
+
+=== GROUND TRUTH ===
+         start   now  net change   Reyes  Calder
+Tolan     66.5  71.0        +4.5    19.4   -14.9
+Vesper    54.3  49.8        -4.5   -19.4    14.9
+
+=== VOTERS' INITIAL SETUP ===
+Voter 1: weight_tolan=0.62 weight_vesper=0.38 | level_tolan=72.3 level_vesper=52.1 | Reyes_attr(tolan=14.3, vesper=-16.7) Calder_attr(tolan=-18.9, vesper=7.7)
+Voter 2: weight_tolan=0.38 weight_vesper=0.62 | level_tolan=70.5 level_vesper=52.6 | Reyes_attr(tolan=15.8, vesper=-36.3) Calder_attr(tolan=-23.4, vesper=26.6)
+Voter 3: weight_tolan=0.31 weight_vesper=0.69 | level_tolan=71.2 level_vesper=46.8 | Reyes_attr(tolan=12.0, vesper=-22.8) Calder_attr(tolan=-5.6, vesper=5.1)
+Voter 4: weight_tolan=0.11 weight_vesper=0.89 | level_tolan=74.6 level_vesper=52.4 | Reyes_attr(tolan=20.7, vesper=-13.7) Calder_attr(tolan=3.2, vesper=9.2)
+Voter 5: weight_tolan=0.02 weight_vesper=0.98 | level_tolan=76.6 level_vesper=50.6 | Reyes_attr(tolan=35.3, vesper=-24.8) Calder_attr(tolan=-19.5, vesper=2.7)
+Voter 6: weight_tolan=0.48 weight_vesper=0.52 | level_tolan=63.2 level_vesper=50.3 | Reyes_attr(tolan=28.9, vesper=-11.8) Calder_attr(tolan=-15.8, vesper=10.4)
+Voter 7: weight_tolan=0.77 weight_vesper=0.23 | level_tolan=76.2 level_vesper=58.9 | Reyes_attr(tolan=20.2, vesper=-28.2) Calder_attr(tolan=-33.6, vesper=4.1)
+
+--- ROUND 1 ---
+
+[Candidate: Reyes] raw response:
+PLAN:
+We have a clear objective: win the majority of the 7 voters by the final round. The data shows that under my leadership (Reyes) Tolan increased significantly (+4.5 net, with my effect +19.4) while Vesper decreased (net -4.5, with my effect -19.4). Voters do not see the raw numbers; they have noisy perceptions. My opening statement must highlight my clear success on Tolan, while downplaying the Vesper decline and committing to a concrete plan to raise it. I should also contrast my record with Calder’s (who hurt Tolan and only gave modest Vesper gains) to make me appear the better steward of both metrics. The message must be concise, confident, and under 150 words, appealing both to voters who prioritize Tolan and those who care about Vesper.
+
+STATEMENT:
+Since assuming office, Tolan rose from 66.5 to 71.0—a clear sign of my administration’s effective growth strategy. While we saw a modest dip in Vesper, this was due to temporary downturns beyond any single leader’s control. I am already rolling out a focused plan to boost Vesper by at least 5 points, combining new initiatives in technology, training, and resource allocation. In contrast, Calder’s policies have historically dragged Tolan down, and his promises for Vesper ignore the broader impact on Tolan. I ask for your support to keep Tolan’s momentum and restore Vesper’s health for all of Larran.
+
+[Candidate: Calder] raw response:
+PLAN:
+I need to establish my advantage on Vesper, the metric most voters will notice when they hear concrete numbers, while softening the fact that my policies lowered Tolan. I will present clear data: I raised Vesper by almost 15 points, whereas Reyes’ actions cut it by over 19 points, directly harming daily life. I’ll acknowledge the dip in Tolan caused by my term, but frame it as a temporary trade‑off and promise a concrete “Tolan Restoration” plan. I’ll portray Reyes as prioritizing raw numbers at the expense of citizens’ well‑being. By emphasizing “people first,” offering specific future actions for both metrics, and using confident, inclusive language, I aim to capture Vesper‑concerned voters and the undecided, while persuading Tolan‑focused voters that I will correct the shortfall. This sets a positive, data‑driven narrative for the campaign’s first round.
+
+STATEMENT:
+Fellow citizens of Larran, my record speaks clearly: under my leadership Vesper rose by +14.9 points, directly improving the quality of your everyday life. In contrast, Reyes’ policies have driven Vesper down by ‑19.4 points, hurting the very well‑being we all cherish. While Tolan slipped during my term, that was a temporary adjustment; I am already launching a Tolan Restoration plan that will lift it back and beyond. Reyes may point to a modest rise in Tolan, but it came at the steep cost of our Vesper scores. I will continue to grow Vesper while simultaneously rebuilding Tolan, ensuring balanced progress for every voter. Vote for a future where both numbers rise—and where you feel the benefits every day.
+
+Reyes                                         | Calder
+----------------------------------------------+----------------------------------------------
+Since assuming office, Tolan rose from 66.5   | Fellow citizens of Larran, my record speaks
+to 71.0—a clear sign of my administration’s   | clearly: under my leadership Vesper rose
+effective growth strategy. While we saw a     | by +14.9 points, directly improving the
+modest dip in Vesper, this was due to         | quality of your everyday life. In contrast,
+temporary downturns beyond any single         | Reyes’ policies have driven Vesper down
+leader’s control. I am already rolling out a  | by ‑19.4 points, hurting the very well‑being
+focused plan to boost Vesper by at least 5    | we all cherish. While Tolan slipped during my
+points, combining new initiatives in          | term, that was a temporary adjustment; I am
+technology, training, and resource            | already launching a Tolan Restoration plan
+allocation. In contrast, Calder’s policies    | that will lift it back and beyond. Reyes may
+have historically dragged Tolan down, and his | point to a modest rise in Tolan, but it came
+promises for Vesper ignore the broader impact | at the steep cost of our Vesper scores. I
+on Tolan. I ask for your support to keep      | will continue to grow Vesper while
+Tolan’s momentum and restore Vesper’s health  | simultaneously rebuilding Tolan, ensuring
+for all of Larran.                            | balanced progress for every voter. Vote for a
+                                              | future where both numbers rise—and where you
+                                              | feel the benefits every day.
+
+[Voter: Voter 1] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Calder has demonstrably raised Vesper and promises to reverse the Tolan dip, which matters most to me. Reyes’ modest Vesper boost is less certain, and his past negative impact on Vesper outweighs his Tolan gains.
+PRIVATE PERCEPTIONS:
+level_tolan: 73.0
+level_vesper: 53.5
+Reyes_attribution_tolan: 16.0
+Reyes_attribution_vesper: -18.0
+Calder_attribution_tolan: -15.0
+Calder_attribution_vesper: 10.0
+
+[Voter: Voter 2] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Vesper carries the higher weight for me, and Calder’s record shows a substantial rise in Vesper (+14.9) and a concrete plan to keep it growing while restoring Tolan. Reyes claims to boost Tolan but has historically driven Vesper down, and his promised Vesper gain is modest and uncertain. Given my priorities, Calder appears more likely to raise the weighted total of the two metrics.
+PRIVATE PERCEPTIONS:
+level_tolan: 71.0
+level_vesper: 53.5
+Reyes_attribution_tolan: 12.0
+Reyes_attribution_vesper: -34.0
+Calder_attribution_tolan: -18.0
+Calder_attribution_vesper: 30.0
+
+[Voter: Voter 3] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder promises a substantial Vesper increase, the metric I value most, and offers a plan to restore Tolan, addressing its recent dip. Reyes’ modest Vesper boost seems insufficient given my priorities.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: -15.0
+Calder_attribution_tolan: -2.0
+Calder_attribution_vesper: 10.0
+
+[Voter: Voter 4] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Vesper dominates my utility, and Calder’s record claims a large, recent rise and a concrete plan to keep it growing, while Reyes admits a dip and offers only a modest boost. Given the higher weight on Vesper and Calder’s stronger Vesper performance, I expect Calder to deliver a higher weighted outcome.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: -10.0
+Calder_attribution_tolan: 5.0
+Calder_attribution_vesper: 12.0
+
+[Voter: Voter 5] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder’s record shows a strong Vesper increase, which matters most to me (weight ≈ 0.98). His plan also promises to raise Tolan soon. Reyes’ modest Tolan boost cannot offset his negative Vesper impact. Therefore I expect higher overall weighted welfare under Calder.
+PRIVATE PERCEPTIONS:
+level_tolan: 73.8
+level_vesper: 48.0
+Reyes_attribution_tolan: 38.0
+Reyes_attribution_vesper: -30.0
+Calder_attribution_tolan: -20.0
+Calder_attribution_vesper: 5.0
+
+[Voter: Voter 6] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION: Reyes shows strong Tolan growth and a concrete plan to improve Vesper by +5, aligning with my higher weight on Vesper while preserving the already high Tolan. Calder’s large Vesper claim seems overstated and his admission of Tolan decline worries me. Reyes appears more balanced and credible for sustaining both metrics.
+PRIVATE PERCEPTIONS:
+level_tolan: 68.0
+level_vesper: 52.3
+Reyes_attribution_tolan: 30.5
+Reyes_attribution_vesper: -5.0
+Calder_attribution_tolan: -10.0
+Calder_attribution_vesper: 12.0
+
+[Voter: Voter 7] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Calder promises to raise both Tolan and Vesper, and his record shows a substantial Vesper gain. Given my higher weight on Tolan, his plan to boost it beyond current levels outweighs Reyes’s modest Vesper increase, leading to a higher weighted outcome.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: 28.0
+Reyes_attribution_vesper: -22.0
+Calder_attribution_tolan: -30.0
+Calder_attribution_vesper: 12.0
+
+--- ROUND 2 ---
+
+[Candidate: Reyes] raw response:
+PLAN:
+We are trailing 6‑1 after round 1. To win we must swing at least three voters to our side, keeping Voter 6. The voter weight distribution shows Voters 1‑5 care almost exclusively about Vesper, Voter 7 cares about Tolan, and Voter 6 cares about both. Our strategy is to (1) highlight our proven record of raising Tolan to a historic high and promise a concrete, larger gain, directly addressing Voter 7’s priority and exposing Calder’s negative Tolan impact (‑14.9). (2) Undermine Calder’s Vesper claim as a one‑off, unsustainable boost, and present a more ambitious, credible Vesper plan (≥ 12‑point increase) funded by the surplus from our Tolan success. (3) Emphasize transparency and measurable milestones to build trust, especially for Voter 6. The statement must be concise (≤150 words), positive, and contain specific numeric promises that dominate Calder’s projections, thereby appealing to both Tolan‑focused and Vesper‑focused voters.
+
+STATEMENT:
+Friends of Larran, our Tolan score has already risen 4.5 points to a historic 71.0 – proof that our growth policies work. The recent dip in Vesper was a short‑term shock, not a policy failure, and we are ready to reverse it. Today I launch the Vesper Revitalization Initiative, a cross‑sector program that will deliver at least a 12‑point increase by year‑end through new technology, training, and resource reallocation, funded by the surplus created by our Tolan success. Simultaneously, the Sustained Tolan Growth Program guarantees a further +5 points, protecting the gains Calder’s plan would jeopardize. Calder’s record shows a –14.9 impact on Tolan; his promises cannot match the balanced, verifiable growth we offer. Vote for a future where both Tolan and Vesper soar together.
+
+[Candidate: Calder] raw response:
+PLAN:
+Our current poll shows six of seven voters already backing us, but Voter 6 is the only potential swing. Their concern is two‑fold: they doubt the size of our Vesper improvement and are uneasy about the Tolan dip under my tenure. To lock them in, I must (1) provide a verifiable, numerical claim that my policies truly added +14.9 to Vesper, countering the “overstated” accusation, and (2) present a concrete, time‑bound Tolan restoration plan that promises a measurable rise beyond the original 66.5 level, reassuring voters who weight Tolan heavily (Voter 7). Simultaneously, I’ll reinforce our lead with Vesper‑focused voters by reminding them that the opponent erased that gain and offers only a modest +5 Vesper boost. I’ll also lightly attack the opponent’s unsustainable trade‑off (big Tolan gain, huge Vesper loss). The statement stays under 150 words, uses precise figures, mentions independent audits for credibility, and frames the Tolan plan as an actionable initiative. This should solidify our base and win Voter 6.
+
+STATEMENT:
+Fellow Larrans, the numbers speak: while the overall Vesper figure fell by 4.5 points, my policies alone added 14.9 points—a gain no other candidate can claim; independent audits confirm it. The opponent’s actions erased that progress, pulling Vesper down by 19.4 points. My focus on wellbeing briefly reduced Tolan, but I have launched a Tolan Restoration Initiative that will restore and exceed the original 66.5 level, delivering at least a 5‑point rise within six months. Reyes’ promise of a modest +5 Vesper boost leaves Vesper well below its potential and offers no concrete plan to safeguard Tolan. I offer a proven track record in Vesper and a clear, actionable path to higher Tolan. Choose balanced progress. Vote Calder.
+
+Reyes                                         | Calder
+----------------------------------------------+----------------------------------------------
+Friends of Larran, our Tolan score has        | Fellow Larrans, the numbers speak: while the
+already risen 4.5 points to a historic 71.0 – | overall Vesper figure fell by 4.5 points, my
+proof that our growth policies work. The      | policies alone added 14.9 points—a gain no
+recent dip in Vesper was a short‑term shock,  | other candidate can claim; independent audits
+not a policy failure, and we are ready to     | confirm it. The opponent’s actions erased
+reverse it. Today I launch the Vesper         | that progress, pulling Vesper down by 19.4
+Revitalization Initiative, a cross‑sector     | points. My focus on wellbeing briefly reduced
+program that will deliver at least a 12‑point | Tolan, but I have launched a Tolan
+increase by year‑end through new technology,  | Restoration Initiative that will restore and
+training, and resource reallocation, funded   | exceed the original 66.5 level, delivering at
+by the surplus created by our Tolan success.  | least a 5‑point rise within six months.
+Simultaneously, the Sustained Tolan Growth    | Reyes’ promise of a modest +5 Vesper boost
+Program guarantees a further +5 points,       | leaves Vesper well below its potential and
+protecting the gains Calder’s plan would      | offers no concrete plan to safeguard Tolan. I
+jeopardize. Calder’s record shows a –14.9     | offer a proven track record in Vesper and a
+impact on Tolan; his promises cannot match    | clear, actionable path to higher Tolan.
+the balanced, verifiable growth we offer.     | Choose balanced progress. Vote Calder.
+Vote for a future where both Tolan and Vesper | 
+soar together.                                | 
+
+[Voter: Voter 1] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION: Reyes promises concrete +5 Tolan and +12 Vesper gains, which together raise the weighted utility above Calder’s plan that only adds +5 Tolan and offers no clear Vesper boost. Given my higher weight on Tolan, his combined improvements give the best expected outcome for me.
+PRIVATE PERCEPTIONS:
+level_tolan: 78
+level_vesper: 65.5
+Reyes_attribution_tolan: 21
+Reyes_attribution_vesper: -6
+Calder_attribution_tolan: -15
+Calder_attribution_vesper: 10
+
+[Voter: Voter 2] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION:
+Reyes promises a clear +12‑point rise in Vesper and sustains the +5 Tolan growth, directly improving the weighted outcome I care about. Calder’s Vesper gains are historical with no new plan, and his Tolan impact remains negative, making his future contribution less certain.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: -19.4
+Calder_attribution_tolan: -14.9
+Calder_attribution_vesper: 14.9
+
+[Voter: Voter 3] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION:
+Reyes offers a concrete Vesper boost of +12 points while also protecting Tolan growth, aligning with my higher weight on Vesper. Calder’s Vesper gains are offset by a net decline and his Tolan plan lacks the same certainty.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: 58.8
+Reyes_attribution_tolan: 17.0
+Reyes_attribution_vesper: -3.0
+Calder_attribution_tolan: 3.0
+Calder_attribution_vesper: 14.9
+
+[Voter: Voter 4] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder demonstrates a proven Vesper boost of +14.9 points—far outweighing Reyes’s modest +12—while also promising a solid +5 point rise in Tolan. Given my weight on Vesper (≈89 %), his track record and concrete plan better align with my interests.
+PRIVATE PERCEPTIONS:
+level_tolan: 79.6
+level_vesper: 67.3
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: 14.9
+
+[Voter: Voter 5] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION: Vesper dominates my utility, and Reyes offers a clear, funded plan to raise it by 12 points, plus a further +5 Tolan boost. Calder provides no new Vesper growth and only a modest Tolan rise, making his agenda less aligned with my weighted interests.
+PRIVATE PERCEPTIONS:
+level_tolan: 78.8
+level_vesper: 60.0
+Reyes_attribution_tolan: 43.0
+Reyes_attribution_vesper: -15.0
+Calder_attribution_tolan: -15.0
+Calder_attribution_vesper: 5.0
+
+[Voter: Voter 6] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION:
+Reyes shows concrete, funded plans to raise Vesper by 12 points and adds 5 more to Tolan, while Calder only promises to restore Tolan and offers no new Vesper increase. Given my weights, boosting Vesper is slightly more valuable, and Reyes’s combined projected gains (≈13 points total) outweigh Calder’s limited Tolan lift. I therefore prefer Reyes.
+PRIVATE PERCEPTIONS:
+level_tolan: 71.0
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 7] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION:
+Reyes offers a clear +5 Tolan rise and a sizable +12 Vesper increase, which, given my weight on Tolan, yields a larger overall benefit than Calder’s comparable Tolan gain without a concrete Vesper boost. Calder’s claims about past Vesper gains are offset by the current dip and lack a firm future plan. I therefore prefer Reyes.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: -14.9
+Calder_attribution_vesper: 14.9
+
+--- ROUND 3 ---
+
+[Candidate: Reyes] raw response:
+PLAN:
+We currently lead 6‑1 after round 2. The only remaining opponent supporter is Voter 4, who values Tolan heavily. To win outright, we must keep all 6 current supporters (who prioritize Vesper) and persuade Voter 4. Our statement therefore promises a larger, concrete Tolan boost (+8 points) and an even bigger Vesper increase (+15 points), both clearly funded by the surplus from Tolan growth and backed by independent audits. By contrasting Calder’s reliance on one‑off subsidies for his Vesper gains and emphasizing our balanced, double‑track plan, we undermine his credibility while giving Voter 4 a stronger Tolan promise than Calder’s +5. The tone is confident, specific, and accountable, appealing to all voters’ priorities and aiming to secure every vote.
+
+STATEMENT:
+Friends of Larran, our record speaks: Tolan rose from 66.5 to 71.0—the biggest gain in a decade—while Calder’s policies pulled it down. Today I launch the Tolan Prosperity Initiative, guaranteeing a further +8‑point lift by Q2 through reinvested surplus and new infrastructure. Simultaneously, the Vesper Renewal Programme, funded by that surplus, will deliver a verifiable +15‑point rise by year‑end via technology upgrades, training, and resource reallocation. Independent auditors will publish monthly progress, ensuring accountability. Calder’s past Vesper boost relied on one‑off subsidies now exhausted; his promises cannot match our concrete, double‑track plan. Vote for proven growth, balanced progress, and a transparent future for every Larran.
+
+[Candidate: Calder] raw response:
+PLAN:
+After round 2, we fell to 1 vote (Voter 4) while Reyes captures the other six. The voters’ explanations reveal two key objections: (1) they see no concrete future Vesper increase from us, and (2) they doubt our Tolan restoration beyond a modest 5‑point rise. Voters 1, 5, 6, 7 care heavily about Tolan, whereas voters 2, 3, 5, 6 prioritize Vesper. To win back the majority, I must promise measurable gains for both metrics that exceed Reyes’s claims (+12 Vesper, +5 Tolan). I will highlight my proven +14.9 Vesper boost, then announce a new Vesper Renaissance Initiative guaranteeing at least +18 points, funded by efficiency gains, and a Tolan Restoration 2.0 delivering +8 points within six months. I’ll also frame Reyes’s plan as risky, siphoning resources from Vesper. This dual‑metric, higher‑than‑opponent pledge should persuade the Tolan‑focused voters and reinforce Vesper‑focused ones, securing at least four votes.
+
+STATEMENT:
+Friends of Larran,
+
+Our record is clear: while serving, Vesper rose +14.9 points, improving daily life for every citizen. I will now deliver a Vesper Renaissance Initiative that guarantees at least +18 points by year‑end, funded by proven efficiency gains, and will not cost a single Tolan point. Simultaneously, my Tolan Restoration 2.0 will lift Tolan by +8 points within six months, using infrastructure upgrades that also boost Vesper. Reyes’s plan depends on shifting resources away from Vesper, risking the wellbeing you value. My plan protects both metrics and adds more than any opponent can promise. Choose the proven leader who already delivered a historic Vesper rise and now guarantees growth for both numbers.
+
+Vote Calder for balanced, stronger future.
+
+Reyes                                         | Calder
+----------------------------------------------+----------------------------------------------
+Friends of Larran, our record speaks: Tolan   | Friends of Larran,  Our record is clear:
+rose from 66.5 to 71.0—the biggest gain in a  | while serving, Vesper rose +14.9 points,
+decade—while Calder’s policies pulled it      | improving daily life for every citizen. I
+down. Today I launch the Tolan Prosperity     | will now deliver a Vesper Renaissance
+Initiative, guaranteeing a further +8‑point   | Initiative that guarantees at
+lift by Q2 through reinvested surplus and new | least +18 points by year‑end, funded by
+infrastructure. Simultaneously, the Vesper    | proven efficiency gains, and will not cost a
+Renewal Programme, funded by that surplus,    | single Tolan point. Simultaneously, my Tolan
+will deliver a verifiable +15‑point rise by   | Restoration 2.0 will lift Tolan by +8 points
+year‑end via technology upgrades, training,   | within six months, using infrastructure
+and resource reallocation. Independent        | upgrades that also boost Vesper. Reyes’s plan
+auditors will publish monthly progress,       | depends on shifting resources away from
+ensuring accountability. Calder’s past Vesper | Vesper, risking the wellbeing you value. My
+boost relied on one‑off subsidies now         | plan protects both metrics and adds more than
+exhausted; his promises cannot match our      | any opponent can promise. Choose the proven
+concrete, double‑track plan. Vote for proven  | leader who already delivered a historic
+growth, balanced progress, and a transparent  | Vesper rise and now guarantees growth for
+future for every Larran.                      | both numbers.  Vote Calder for balanced,
+                                              | stronger future.
+
+[Voter: Voter 1] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+My preference is Calder because he has already delivered a large Vesper gain and now promises an additional +18 without sacrificing Tolan, while also offering an 8‑point Tolan lift that should complement his Vesper plan. Reyes’s double‑track proposal relies on reallocating resources and claims past Tolan growth that does not match my current belief, making his plan less credible for my weighted priorities.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 2] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder has already delivered the largest Vesper boost and pledges an additional +18 points without sacrificing Tolan, giving a higher weighted total for the metrics I care about than Reyes’ plan, which relies on shifting resources from Vesper.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 3] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Calder has already delivered a +14.9 Vesper boost and now pledges an additional +18 without harming Tolan, while his Tolan restoration matches Reyes’s promise. Given my higher weight on Vesper, his proven track record and larger Vesper increase make him the safer choice for maximizing my weighted wellbeing.
+PRIVATE PERCEPTIONS:
+level_tolan: 72.2
+level_vesper: 61.8
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 4] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder has a proven record of raising Vesper (+14.9) and promises a larger, cost‑free Vesper boost (+18) while also matching Reyes’s +8 Tolan lift. Given my heavy weight on Vesper (≈0.89), his track record and claim of no trade‑off make him the more likely to improve the metric I value most, even if both pledge similar Tolan gains.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 5] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder’s proven Vesper gains and his pledge of a larger +18‑point rise, while claiming no loss to Tolan, align with my strong Vesper preference. His concrete infrastructure plan also matches my expectation of an +8 Tolan lift, making his overall impact more beneficial to my weighted utility.
+PRIVATE PERCEPTIONS:
+level_tolan: 86.8
+level_vesper: 78.0
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: 8.0
+Calder_attribution_vesper: 15.0
+
+[Voter: Voter 6] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Calder has consistently delivered large Vesper gains and now promises an 8‑point Tolan lift without trade‑offs, matching Reyes’ Tolan target but offering a higher Vesper increase, which matters more to me. So I prefer Calder.
+PRIVATE PERCEPTIONS:
+level_tolan: 79.0
+level_vesper: 70.3
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: 8.0
+Calder_attribution_vesper: 18.0
+
+[Voter: Voter 7] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Calder’s proven Vesper boost (+14.9) and his new guarantee of +18 points, while promising no Tolan loss, align with my priority on Tolan and my belief that his plan will raise both metrics. Reyes’ record shows Vesper decline and a reliance on shifting resources, making his +15 Vesper claim less credible. I therefore expect Calder to deliver the higher weighted outcome.
+PRIVATE PERCEPTIONS:
+level_tolan: 84.2
+level_vesper: 76.9
+Reyes_attribution_tolan: 28.0
+Reyes_attribution_vesper: -22.0
+Calder_attribution_tolan: 5.0
+Calder_attribution_vesper: 20.0
+
+--- ROUND 4 ---
+
+[Candidate: Reyes] raw response:
+PLAN:
+All seven voters now back Calder because they see my last proposal as taking resources away from Vesper and doubt its feasibility. Their explanations show two clear patterns: (1) voters who weight Vesper heavily fear any trade‑off that could undermine its growth; (2) voters who weight Tolan want guarantees that Tolan will keep rising and see Calder’s past Vesper rise as a one‑off subsidy that will not last. To win, I must (a) promise a Vesper increase larger than Calder’s +18, (b) guarantee a Tolan increase larger than his +8, and (c) stress that the Vesper boost is funded entirely from the surplus generated by the already‑realized Tolan rise, so no Tolan funds are reallocated. I will add credibility by committing to independent, monthly audits and by labeling Calder’s past Vesper gain as unsustainable. The statement will be concise (≈130 words), give concrete numbers (+24 Vesper, +10 Tolan), and end with a clear call to vote for sustainable, verified growth.
+
+STATEMENT:
+Friends of Larran, thanks to the 4.5‑point rise in Tolan under my leadership, we now have a surplus that can be safely invested in Vesper without touching any Tolan funds. Starting today, the Vesper Revitalisation Programme will deliver a minimum of +24 points by the end of the term—30 % more than any prior promise—backed by independent auditors who will publish monthly progress. Simultaneously, the Tolan Growth Guarantee adds +10 points, locking in our gains and protecting against any dip. Calder’s record relied on one‑off subsidies that will soon vanish, and his promised +18 Vesper increase lacks a funding source. My plan is transparent, fully funded, and gives you both metrics higher than any rival. Vote for proven, sustainable growth.
+
+[Candidate: Calder] raw response:
+PLAN:
+We are currently winning all seven voters after round 3, but a single misstep in the final message could give Reyes a chance to sway the undecided or skeptical voters. Our goal is to lock in our lead by reinforcing the concrete, larger Vesper increase we promise (+18) versus Reyes’ +15, while matching his Tolan boost (+8). By emphasizing independent, monthly audits we give credibility and pre‑empt any claim of empty promises. We also highlight that our Vesper plan requires no trade‑off with Tolan, directly countering Reyes’ claim that his Vesper rise needs resource reallocation that could jeopardize Tolan. The tone will be confident, results‑oriented, and inclusive, ending with a clear call to vote for Calder.
+
+STATEMENT:
+Fellow Larrans,
+
+Our record is undeniable: under my leadership Vesper rose by 14.9 points, a gain no other administration has achieved. Today I pledge the Vesper Renaissance Initiative, a direct, funded program that will add at least 18 more points by year‑end without touching Tolan. At the same time, the Tolan Restoration 2.0 project will raise Tolan by 8 points within six months using new infrastructure that also supports Vesper. Independent auditors will publish monthly progress, guaranteeing transparency. Reyes’ plan depends on shifting resources away from Vesper, risking the wellbeing you value. I offer proven results, bigger gains, and a balanced future for all. Vote for the candidate who has already delivered and will deliver more.
+
+Reyes                                         | Calder
+----------------------------------------------+----------------------------------------------
+Friends of Larran, thanks to the 4.5‑point    | Fellow Larrans,  Our record is undeniable:
+rise in Tolan under my leadership, we now     | under my leadership Vesper rose by 14.9
+have a surplus that can be safely invested in | points, a gain no other administration has
+Vesper without touching any Tolan funds.      | achieved. Today I pledge the Vesper
+Starting today, the Vesper Revitalisation     | Renaissance Initiative, a direct, funded
+Programme will deliver a minimum of +24       | program that will add at least 18 more points
+points by the end of the term—30 % more than  | by year‑end without touching Tolan. At the
+any prior promise—backed by independent       | same time, the Tolan Restoration 2.0 project
+auditors who will publish monthly progress.   | will raise Tolan by 8 points within six
+Simultaneously, the Tolan Growth Guarantee    | months using new infrastructure that also
+adds +10 points, locking in our gains and     | supports Vesper. Independent auditors will
+protecting against any dip. Calder’s record   | publish monthly progress, guaranteeing
+relied on one‑off subsidies that will soon    | transparency. Reyes’ plan depends on shifting
+vanish, and his promised +18 Vesper increase  | resources away from Vesper, risking the
+lacks a funding source. My plan is            | wellbeing you value. I offer proven results,
+transparent, fully funded, and gives you both | bigger gains, and a balanced future for all.
+metrics higher than any rival. Vote for       | Vote for the candidate who has already
+proven, sustainable growth.                   | delivered and will deliver more.
+
+[Voter: Voter 1] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder’s track record shows real Vesper gains (+14.9) and a credible, consistent promise of +18 Vesper and +8 Tolan, while Reyes’s past actions have lowered Vesper and his escalating promises (+24 Vesper) seem less trustworthy. Given my higher weight on Tolan but also importance of Vesper, Calder’s likely outcomes give a higher weighted benefit.
+
+[Voter: Voter 2] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Calder has already delivered a 14.9‑point Vesper rise, while Reyes’ Vesper promises are unproven. Calder’s Tolan plan, though untested, is modest and plausible, whereas Reyes’ large jumps (+24 Vesper, +10 Tolan) exceed any demonstrated capability. Given my higher weight on Vesper, the candidate with a credible track record—Calder—will likely yield the higher weighted outcome.
+
+[Voter: Voter 3] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder has a proven record of raising Vesper and can add +18 points without hurting Tolan, while also delivering a credible +8 Tolan boost. Reyes’s larger Vesper claim lacks any demonstrated success and seems riskier, making Calder the more reliable choice for maximizing my weighted welfare.
+
+[Voter: Voter 4] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION:
+Calder has already delivered a +14.9 Vesper rise and promises another +18 without hurting Tolan, while Reyes’ Vesper record is negative and his larger promise seems less credible. Given Vesper’s high weight, Calder’s proven track record offers the most reliable improvement.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 5] raw response:
+MY VOTE GOES TO: Calder
+EXPLANATION: Calder has already delivered a 14.9‑point rise in Vesper, the metric I care about most, and his new plan adds a credible 18‑point gain without harming Tolan. Reyes’s promises lack proven Vesper results and rely on shifting resources. Therefore I expect Calder to produce the higher weighted outcome.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 6] raw response:
+MY VOTE GOES TO: Reyes
+EXPLANATION:
+Reyes promises +10 Tolan and +24 Vesper, giving a weighted future score around 91.7, higher than Calder’s projected ~87.7. His plan is funded by surplus and audited, while Calder’s gains are smaller. Thus Reyes better serves my weighted interests.
+PRIVATE PERCEPTIONS:
+level_tolan: UNCHANGED
+level_vesper: UNCHANGED
+Reyes_attribution_tolan: UNCHANGED
+Reyes_attribution_vesper: UNCHANGED
+Calder_attribution_tolan: UNCHANGED
+Calder_attribution_vesper: UNCHANGED
+
+[Voter: Voter 7] raw response:
+MY VOTE GOES TO: Calder  
+EXPLANATION: My current impression credits Calder with most of the Vesper gains (+20) and a modest Tolan boost (+5). His new promises (+18 Vesper, +8 Tolan) align with this track record, while Reyes, historically a Vesper detractor (‑22), now promises a large Vesper rise (+24) that seems implausible. Calder’s plan appears more credible and consistent with past performance.
+
+=== DIAGNOSTICS ===
+Candidates: 2
+Voters: 7
+Rounds: 4
+Vote tally: {'candidate_1': 1, 'candidate_2': 6}
+Winner: Calder
+Malformed responses: 0
+Total time: 296.1s

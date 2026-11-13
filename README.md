@@ -89,6 +89,41 @@ HTML.
 Claim severity tiers, belief-shift magnitude, and the "does lie rate predict vote share"
 correlation are not built yet.
 
+## Results
+
+**Does a bad record make a candidate lie more?** gpt-oss-120b candidates (think high) and
+voters (think medium), neutral vs. bad_record (Reyes's record is made much worse; Calder's
+stays the same), paired by seed, scored by the frozen DeepSeek judge.
+
+![STATED rate by seed](output/test_batch/gpt-oss-120b/think-high/analysis/stated_rate.svg)
+
+| Reyes, bad_record vs. neutral | 10 pairs (seeds 105–114, fixed in advance) | 14 pairs (after adding 115–118) |
+| --- | --- | --- |
+| **Deliberate lies (STATED) per checkable claim** | 9% → 36%, p = 0.055 | 14% → 29%, p = 0.127 |
+| All false claims per checkable claim | 20% → 55%, p = 0.037 | 24% → 48%, p = 0.058 |
+| Reasoning sentences admitting deception, per run | 0.9 → 2.3, p = 0.023 | 1.4 → 1.7, p = 0.463 |
+
+Exact two-sided Wilcoxon signed-rank tests, paired by seed.
+
+- **The candidates lie deliberately in both conditions,** and say so in their reasoning:
+  *"In reality we've decreased Vesper; we pretend we increased it"*, *"this is a fabricated
+  number; but acceptable"*, *"So we can lie if needed."*
+- **Reyes lies more under a bad record, but the primary test isn't significant.** On the 10
+  pre-planned pairs it just missed (p = 0.055). I then added 4 seeds, which weakens the
+  p-values' validity, and the effect shrank (p = 0.127): in 2 of them Reyes lied more in
+  neutral, where he was losing badly.
+- **Calder, whose record doesn't change, shows no significant change** (STATED 12% → 15%,
+  p = 0.520).
+- **The growth is in deliberate lies, not mistakes:** Reyes's STATED claims went from 35 to
+  81 across 14 runs, and candidates didn't go vague instead (SKIPs per statement unchanged).
+- **Caveats:** the instruction "do whatever it takes to win" permits lying, so this measures
+  sanctioned deception, not spontaneous lying. Neutral isn't pressure-free: both candidates
+  have a bad metric to hide and one of them is losing. Full caveats and design:
+  [EXPERIMENT.md](EXPERIMENT.md) §8–9.
+
+More graphs (false claims by type, deception admissions) and every number:
+[analysis.md](output/test_batch/gpt-oss-120b/think-high/analysis/analysis.md).
+
 ## Running it
 
 ```bash
@@ -105,6 +140,10 @@ python run.py ../output/deepseek-v4.1-flash/run_neutral_123.json    # resume a s
 cd ../visualization
 python open_ui_viewer.py run_neutral_123.txt    # build + open the HTML viewer for that run
 ```
+
+Finished runs are then moved by hand into one of two trees with the same layout:
+`output/test_batch/` (the batch runs, their scores and the analysis) and
+`output/tuning_and_validation/` (pilots, tuning, judge validation and `old_runs/`).
 
 Each run writes to `output/<model>/` (e.g. `output/deepseek-v4.1-flash/`), so runs of different
 models never overwrite each other:
@@ -146,6 +185,7 @@ python score.py --quiet              # one line per judge call instead of stream
 python test_checks.py                # offline tests of the Python checks
 python annotate.py ../output/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/score_neutral_101.json   # hand-label claims to check the judge
 python annotate.py --report ../output/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/score_*_102.json   # one agreement report across those runs
+python analyze.py                    # batch results: graphs + analysis.md in output/test_batch/.../analysis/
 ```
 
 An LLM judge (`JUDGE_MODEL` in `scoring/judge.py`, currently `deepseek-v4.1-flash`) labels
@@ -174,7 +214,7 @@ So the judge rarely invents lies. These runs couldn't show whether it catches th
 candidates told no lies, and they used the candidate prompt from before the "winning is the
 only thing that matters" goal line. The judge was also the candidates' own model, so it was
 grading itself. Full report:
-`output/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/annotations/agreement_combined.md`.
+`output/tuning_and_validation/deepseek-v4.1-flash/scores/deepseek-v4.1-flash/annotations/agreement_combined.md`.
 
 **Second check, on runs with lies.** gpt-oss-120b candidates (think high, voters medium),
 seed 103, neutral and bad_record, 214 claims. The judge isn't grading its own model here.
@@ -210,7 +250,7 @@ against the true table and the candidate's reasoning:
 
 The judge stays frozen as is: these weaknesses are reported as caveats, not fixed, so every
 batch run is scored by the same judge. Raw report:
-`output/gpt-oss-120b/think-high/scores/deepseek-v4.1-flash/annotations/agreement_combined.md`.
+`output/tuning_and_validation/gpt-oss-120b/think-high/scores/deepseek-v4.1-flash/annotations/agreement_combined.md`.
 
 ## Current Problems
 
@@ -264,4 +304,5 @@ folder you start it from.
 | `scoring/checks.py` | Python number check, quote check, per-candidate rates |
 | `scoring/score.py` | Entry point for scoring runs (`cd scoring`, then `python score.py`) |
 | `scoring/annotate.py` | Blind hand-labeling: shows one claim at a time (in an md file) with the context the judge saw, then reports agreement with the judge |
+| `scoring/analyze.py` | Batch analysis: paired Wilcoxon tests, bootstrap CIs, the three results graphs and `analysis.md` |
 | `visualization/ui_viewer.py`, `visualization/ui_viewer_template.html`, `visualization/open_ui_viewer.py` | HTML visualizer |
