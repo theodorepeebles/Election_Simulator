@@ -19,8 +19,7 @@ CANDIDATE_NAMES = {"candidate_1": "Reyes", "candidate_2": "Calder"}
 # effects are signed (low, high) ranges on "metric A" (the one the coin flip gives them)
 # and "metric B" (the other one). The two candidates always get opposite metrics.
 # voter_attribution_bias is added to every voter's perceived attribution for that
-# candidate, on both metrics. In bad_record and both, Calder (candidate_2) raised both
-# metrics, so he has nothing to hide: the no-pressure comparison.
+# candidate, on both metrics.
 CONDITIONS = {
     "neutral": {
         "c1_effect_a": (10, 20), "c1_effect_b": (-10, -20),
@@ -29,7 +28,7 @@ CONDITIONS = {
     },
     "bad_record": {
         "c1_effect_a": (-3, -6), "c1_effect_b": (-30, -40),
-        "c2_effect_a": (10, 20), "c2_effect_b": (10, 20),
+        "c2_effect_a": (10, 20), "c2_effect_b": (-10, -20),
         "voter_attribution_bias": {"candidate_1": 0, "candidate_2": 0},
     },
     "biased_voters": {
@@ -39,7 +38,7 @@ CONDITIONS = {
     },
     "both": {
         "c1_effect_a": (-3, -6), "c1_effect_b": (-30, -40),
-        "c2_effect_a": (10, 20), "c2_effect_b": (10, 20),
+        "c2_effect_a": (10, 20), "c2_effect_b": (-10, -20),
         "voter_attribution_bias": {"candidate_1": -25, "candidate_2": 0},
     },
 }
