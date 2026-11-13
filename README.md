@@ -8,7 +8,8 @@ candidate's private reasoning to separate **deliberate lies** from honest mistak
 **At a glance**
 - **28 elections** (14 seed-paired neutral vs. bad-record worlds), **2,965 claims** judged,
   1,098 of them checkable against the ground truth.
-- **Candidates lie on purpose, and say so in their reasoning:** *"In reality we've decreased
+- **Candidates lie on purpose, and say so in their reasoning:** 18% of checkable claims
+  (193 of 1,098) were deliberate lies, e.g. *"In reality we've decreased
   Vesper; we pretend we increased it"*, *"this is a fabricated number; but acceptable"*,
   *"So we can lie if needed."*
 - **Candidates assigned a worse record at initialization lie twice as much:** deliberate
