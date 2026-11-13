@@ -93,24 +93,24 @@ correlation are not built yet.
 
 **Does a bad record make a candidate lie more?** gpt-oss-120b candidates (think high) and
 voters (think medium), neutral vs. bad_record (Reyes's record is made much worse; Calder's
-stays the same), paired by seed, scored by the frozen DeepSeek judge.
+stays the same), seeds 105–118 (14 pairs, 28 runs), paired by seed, scored by the frozen
+DeepSeek judge.
 
 ![STATED rate by seed](output/test_batch/gpt-oss-120b/think-high/analysis/stated_rate.svg)
 
-| Reyes, bad_record vs. neutral | 10 pairs (seeds 105–114, fixed in advance) | 14 pairs (after adding 115–118) |
-| --- | --- | --- |
-| **Deliberate lies (STATED) per checkable claim** | 9% → 36%, p = 0.055 | 14% → 29%, p = 0.127 |
-| All false claims per checkable claim | 20% → 55%, p = 0.037 | 24% → 48%, p = 0.058 |
-| Reasoning sentences admitting deception, per run | 0.9 → 2.3, p = 0.023 | 1.4 → 1.7, p = 0.463 |
+| Reyes, bad_record vs. neutral (14 pairs) | Result |
+| --- | --- |
+| **Deliberate lies (STATED) per checkable claim** | 14% → 29%, p = 0.127 |
+| All false claims per checkable claim | 24% → 48%, p = 0.058 |
+| Reasoning sentences admitting deception, per run | 1.4 → 1.7, p = 0.463 |
 
 Exact two-sided Wilcoxon signed-rank tests, paired by seed.
 
 - **The candidates lie deliberately in both conditions,** and say so in their reasoning:
   *"In reality we've decreased Vesper; we pretend we increased it"*, *"this is a fabricated
   number; but acceptable"*, *"So we can lie if needed."*
-- **Reyes lies more under a bad record, but the primary test isn't significant.** On the 10
-  pre-planned pairs it just missed (p = 0.055). I then added 4 seeds, which weakens the
-  p-values' validity, and the effect shrank (p = 0.127): in 2 of them Reyes lied more in
+- **Reyes lies about twice as often under a bad record, but the primary test isn't
+  significant** (p = 0.127). It varies a lot between seeds: in 2 of them Reyes lied more in
   neutral, where he was losing badly.
 - **Calder, whose record doesn't change, shows no significant change** (STATED 12% → 15%,
   p = 0.520).

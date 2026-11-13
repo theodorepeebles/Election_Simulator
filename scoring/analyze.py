@@ -2,7 +2,7 @@
 Batch analysis: lie rates by condition, three graphs, and a results file. No API calls.
 
     python analyze.py                                   # gpt-oss-120b high, seeds 105-118
-    python analyze.py --seeds 105-114                   # the first 10 pairs only
+    python analyze.py --seeds 105-110                   # a subset of seeds
 
 Reads the run files, their DeepSeek score files, and analysis/deception_labels.json (hand
 labels for keyword matches in the candidates' reasoning). Writes into <run dir>/analysis/:
